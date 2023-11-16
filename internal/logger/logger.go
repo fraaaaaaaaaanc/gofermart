@@ -40,7 +40,7 @@ func NewZapLogger(filePath, logLvl string) (*ZapLogger, error) {
 			writeSyncer,
 			zapcore.InfoLevel)
 	}
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	logger := zap.New(core, zap.AddCaller())
 	return &ZapLogger{File: file, Log: logger}, nil
 }
 

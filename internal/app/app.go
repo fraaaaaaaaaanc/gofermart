@@ -6,9 +6,12 @@ import (
 	"gofermart/internal/config"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
+	"gofermart/internal/models/handlersmodels"
 	"gofermart/internal/router"
 	"gofermart/internal/storage"
+	"gofermart/internal/workwithapi"
 	"net/http"
+	"time"
 )
 
 type app struct {
@@ -17,6 +20,7 @@ type app struct {
 	hndlrs    allhandlers.Handlers
 	router    chi.Router
 	strgs     *storage.Storage
+	workAPI   *workwithapi.WorkAPI
 }
 
 func NewApp() (*app, error) {
@@ -29,27 +33,51 @@ func NewApp() (*app, error) {
 	if err != nil {
 		panic(err)
 	}
-	hndlr := allhandlers.NewHandlers()
-	rtr, err := router.NewRouter(hndlr)
+	hndlr := allhandlers.NewHandlers(log.Log, strg)
+	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
+	rtr, err := router.NewRouter(hndlr, log.Log)
 	if err != nil {
 		panic(err)
 	}
 
-	return &app{
+	appObj := &app{
 		flagsConf: flags,
 		logZap:    log,
 		hndlrs:    hndlr,
 		router:    rtr,
 		strgs:     strg,
-	}, nil
+		workAPI:   workAPI,
+	}
+
+	go appObj.listenChanel()
+	return appObj, nil
 }
 
 func Run() error {
 	app, _ := NewApp()
 	defer app.logZap.CloseFile()
-
-	app.logZap.Info("Server start", zap.String("Running server on", app.flagsConf.String()))
+	app.logZap.Log.Info("Server start", zap.String("Running server on", app.flagsConf.String()))
 	err := http.ListenAndServe(app.flagsConf.String(), app.router)
-	app.logZap.Error("Error run server", zap.Error(err))
+	app.logZap.Log.Error("Error run server", zap.Error(err))
 	return err
+}
+
+func (a *app) listenChanel() {
+	ticker := time.NewTicker(1 * time.Second)
+
+	var orderInfoList []*handlersmodels.OrderInfo
+	for {
+		select {
+		case orderInfo := <-a.hndlrs.Ch:
+			orderInfoList = append(orderInfoList, orderInfo)
+		case <-ticker.C:
+			if len(orderInfoList) == 0 {
+				continue
+			}
+			for _, orderInfo := range orderInfoList {
+				a.workAPI.RegisterOrderNumber(orderInfo)
+			}
+			orderInfoList = nil
+		}
+	}
 }
