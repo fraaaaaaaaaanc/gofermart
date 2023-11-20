@@ -2,7 +2,6 @@ package testhandlers
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 	"gofermart/internal/config"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
@@ -45,11 +44,7 @@ func TestLogin(t *testing.T) {
 			hndlr.Login(w, request)
 
 			resp := w.Result()
-			defer func() {
-				if err := resp.Body.Close(); err != nil {
-					log.Error("request body closing error", zap.Error(err))
-				}
-			}()
+			defer resp.Body.Close()
 
 			assert.Equal(t, resp.StatusCode, test.statusCode)
 			if test.cookie != nil {
