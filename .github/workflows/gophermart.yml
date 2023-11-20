@@ -34,6 +34,10 @@ jobs:
         uses: robinraju/release-downloader@v1.8
         with:
           repository: Yandex-Practicum/go-autotests-bin
+<<<<<<< HEAD
+=======
+          latest: true 
+>>>>>>> 7ff831a2e54e7746e7afbed7ddce23eeeb6ed2ae
           fileName: "*"
           out-file-path: .tools
           latest: true
