@@ -8,11 +8,11 @@ import (
 )
 
 func (w *WorkAPI) getOrdersAccrual() {
-	ticker := time.NewTicker(time.Second * 10)
+	ticker := time.NewTicker(time.Second * 3)
 	defer ticker.Stop()
 
 	for range ticker.C {
-		ticker.Reset(time.Second * 15)
+		ticker.Reset(time.Second * 5)
 		unAccrualOrdersList, err := w.strg.GetAllUnAccrualOrders()
 		if err != nil && !errors.Is(err, workwithapimodels.ErrNoOrdersForAcrrual) {
 			w.log.Error("error when working with the database at the time of receiving the list of "+
