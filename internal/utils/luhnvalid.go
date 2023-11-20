@@ -9,13 +9,13 @@ func IsLuhnValid(orderNumber string) error {
 	sum := 0
 	lenOrderNumber := len(orderNumber) - 1
 	if lenOrderNumber < 0 {
-		return utilsmodels.IsNilOrderNumber
+		return utilsmodels.ErrIsNilOrderNumber
 	}
 
 	for i := lenOrderNumber; i >= 0; i-- {
 		digit, err := strconv.Atoi(string(orderNumber[i]))
 		if err != nil {
-			return utilsmodels.IsNotNumber
+			return utilsmodels.ErrIsNotNumber
 		}
 
 		if (lenOrderNumber-i)%2 != 0 {
@@ -28,7 +28,7 @@ func IsLuhnValid(orderNumber string) error {
 		sum += digit
 	}
 	if sum%10 != 0 {
-		return utilsmodels.IsNotLuhnValid
+		return utilsmodels.ErrIsNotLuhnValid
 	}
 	return nil
 }

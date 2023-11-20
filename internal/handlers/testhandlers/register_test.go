@@ -2,6 +2,7 @@ package testhandlers
 
 import (
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/config"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
 	"gofermart/internal/storage"
@@ -12,10 +13,11 @@ import (
 )
 
 func TestRegister(t *testing.T) {
+	flags := config.ParseFlags()
 	log, _ := logger.NewZapLogger("", "local")
-	strg, _ := storage.NewStorage("host=localhost password=1234 dbname=gofermart user=postgres " +
-		"sslmode=disable")
-	hndlr := allhandlers.NewHandlers(log.Log, strg)
+	strg, _ := storage.NewStorage("host=localhost password=1234 dbname=gofermart user=postgres "+
+		"sslmode=disable", log.Log)
+	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
 
 	method := http.MethodPost
 	url := "http://localhost:8080/api/user/register"

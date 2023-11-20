@@ -13,7 +13,7 @@ func (s *Storage) inTransaction(ctx context.Context, db *sql.DB, f func(ctx cont
 	}
 
 	if err := f(ctx, tx); err != nil {
-		if rollbackErr := tx.Rollback(); err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			s.log.Error("error in the operation of tx.Rollback", zap.Error(rollbackErr))
 		}
 		return err

@@ -1,8 +1,8 @@
-package models
+package workwithapimodels
 
 import "github.com/shopspring/decimal"
 
-type ReqApiOrders struct {
+type ReqAPIOrders struct {
 	OrderNumber string  `json:"order"`
 	Goods       []Goods `json:"goods"`
 }

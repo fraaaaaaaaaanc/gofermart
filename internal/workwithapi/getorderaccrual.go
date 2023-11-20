@@ -13,6 +13,7 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*workwithapimodels.Res
 	var respGetOrderAccrual workwithapimodels.ResGetOrderAccrual
 	for _, orderNumber := range ordersNumber {
 		resp := w.GetRequestOrderAccrual(orderNumber)
+		defer resp.Body.Close()
 
 		switch resp.StatusCode {
 		case http.StatusOK:

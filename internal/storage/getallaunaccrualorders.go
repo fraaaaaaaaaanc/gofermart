@@ -12,6 +12,7 @@ func (s *Storage) GetAllUnAccrualOrders() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var ordersList []string
 	for rows.Next() {
@@ -20,6 +21,10 @@ func (s *Storage) GetAllUnAccrualOrders() ([]string, error) {
 			return nil, err
 		}
 		ordersList = append(ordersList, order)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
 	}
 
 	if ordersList == nil {

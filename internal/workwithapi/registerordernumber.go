@@ -3,7 +3,6 @@ package workwithapi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"go.uber.org/zap"
 	"gofermart/internal/models/workwithapimodels"
 	"net/http"
@@ -19,6 +18,8 @@ func (w *WorkAPI) RegisterOrderNumber(ordersInfo []*workwithapimodels.UnRegister
 		resp, err := http.Post("http://localhost:8080/api/orders",
 			"application/json",
 			bytes.NewBuffer(orderInfoJSON))
+		defer resp.Body.Close()
+
 		if err != nil {
 			w.log.Error("error sending a POST http://localhost:8080/api/orders request to the bonus points "+
 				"calculation server API", zap.Error(err))
@@ -27,7 +28,6 @@ func (w *WorkAPI) RegisterOrderNumber(ordersInfo []*workwithapimodels.UnRegister
 		switch resp.StatusCode {
 		case http.StatusAccepted:
 			w.log.Info("order sent by POST http://localhost:8080/api/orders successfully accepted for processing")
-			fmt.Println(orderInfo.OrderNumber)
 			err := w.strg.UpdateOrderStatus(orderInfo.OrderNumber)
 			if err != nil {
 				w.log.Error("error changing the order status in the database table after its registration in " +

@@ -51,10 +51,10 @@ func getUserIDCookie(tokenString, secretKeyJWTToken string) (int, error) {
 		return 0, err
 	}
 	if !token.Valid {
-		return 0, cookiemodels.CookieIsNotValid
+		return 0, cookiemodels.ErrCookieIsNotValid
 	}
 	if err = valid.Struct(claims); err != nil {
-		return 0, cookiemodels.AbsentUserID
+		return 0, cookiemodels.ErrAbsentUserID
 	}
 	return claims.UserID, nil
 }

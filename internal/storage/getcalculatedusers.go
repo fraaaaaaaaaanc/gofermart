@@ -12,6 +12,7 @@ func (s *Storage) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, 
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var usersOrdersAccrualList []workwithapimodels.UsersOrdersAccrual
 	for rows.Next() {
@@ -21,6 +22,10 @@ func (s *Storage) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, 
 		}
 
 		usersOrdersAccrualList = append(usersOrdersAccrualList, usersOrdersAccrual)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
 	}
 
 	if usersOrdersAccrualList == nil {

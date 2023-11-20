@@ -25,7 +25,7 @@ func (s *Storage) WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error 
 
 		if err != nil {
 			var pgErr *pgconn.PgError
-			if errors.Is(err, pgErr) && pgErr.Code == "CHECK_VIOLATION" {
+			if errors.As(err, &pgErr) && pgErr.Code == "CHECK_VIOLATION" {
 				err = handlersmodels.ErrNegativeBalanceValue
 			}
 			return err
@@ -38,7 +38,7 @@ func (s *Storage) WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error 
 
 		if err != nil {
 			var pgErr *pgconn.PgError
-			if errors.Is(err, pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
+			if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
 				err = handlersmodels.ErrDuplicateOrderNumberHistoryBalance
 			}
 			return err

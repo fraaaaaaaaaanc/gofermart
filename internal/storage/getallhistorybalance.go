@@ -15,6 +15,7 @@ func (s *Storage) GetAllHistoryBalance(ctx context.Context) ([]handlersmodels.Re
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var respWithdrawalsHistory []handlersmodels.RespWithdrawalsHistory
 	for rows.Next() {
@@ -31,6 +32,10 @@ func (s *Storage) GetAllHistoryBalance(ctx context.Context) ([]handlersmodels.Re
 		}
 
 		respWithdrawalsHistory = append(respWithdrawalsHistory, withdrawal)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
 	}
 
 	if respWithdrawalsHistory == nil {

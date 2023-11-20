@@ -31,6 +31,11 @@ func (s *Storage) GetAllUserOrders(ctx context.Context) ([]handlersmodels.RespGe
 		orderInfo.UploadedAt = uploadedAt.Format(time.RFC3339)
 		respGetOrders = append(respGetOrders, orderInfo)
 	}
+
+	if rows.Err() != nil {
+		return nil, err
+	}
+
 	if respGetOrders == nil {
 		return nil, handlersmodels.ErrTheAreNoOrders
 	}

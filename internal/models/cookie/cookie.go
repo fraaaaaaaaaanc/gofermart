@@ -5,9 +5,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var CookieIsNotValid = errors.New("token is not valid")
+var ErrCookieIsNotValid = errors.New("token is not valid")
 
-var AbsentUserID = errors.New("the token does not have a field userID")
+var ErrAbsentUserID = errors.New("the token does not have a field userID")
 
 type ContextKey string
 
