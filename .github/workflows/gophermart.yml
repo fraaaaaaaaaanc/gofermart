@@ -34,9 +34,9 @@ jobs:
         uses: robinraju/release-downloader@v1.8
         with:
           repository: Yandex-Practicum/go-autotests-bin
-          tag: "v0.10.2"
           fileName: "*"
           out-file-path: .tools
+          latest: true
 
       - name: Setup autotest binary
         run: |
