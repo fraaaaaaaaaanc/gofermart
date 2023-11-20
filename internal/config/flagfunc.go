@@ -16,6 +16,7 @@ const (
 )
 
 type Flags struct {
+	SecretKeyJWTToken    string
 	AccrualSystemAddress string
 	LogFilePath          string
 	ProjLvl              string

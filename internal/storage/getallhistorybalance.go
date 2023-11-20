@@ -9,7 +9,7 @@ import (
 
 func (s *Storage) GetAllHistoryBalance(ctx context.Context) ([]handlersmodels.RespWithdrawalsHistory, error) {
 	userID := ctx.Value(cookiemodels.UserID).(int)
-	rows, err := s.DB.Query("SELECT order_number, withdrawn_sum, withdrawn_datetime FROM history_balance "+
+	rows, err := s.DB.Query("SELECT order_number_unregister, withdrawn_sum, withdrawn_datetime FROM history_balance "+
 		"WHERE user_id = $1 ORDER BY withdrawn_datetime ASC",
 		userID)
 	if err != nil {

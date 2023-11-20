@@ -6,12 +6,10 @@ import (
 	"gofermart/internal/config"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
-	"gofermart/internal/models/handlersmodels"
 	"gofermart/internal/router"
 	"gofermart/internal/storage"
 	"gofermart/internal/workwithapi"
 	"net/http"
-	"time"
 )
 
 type app struct {
@@ -29,13 +27,13 @@ func NewApp() (*app, error) {
 	if err != nil {
 		panic(err)
 	}
-	strg, err := storage.NewStorage(flags.DataBaseURI)
+	strg, err := storage.NewStorage(flags.DataBaseURI, log.Log)
 	if err != nil {
 		panic(err)
 	}
-	hndlr := allhandlers.NewHandlers(log.Log, strg)
+	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
 	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
-	rtr, err := router.NewRouter(hndlr, log.Log)
+	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +47,6 @@ func NewApp() (*app, error) {
 		workAPI:   workAPI,
 	}
 
-	go appObj.listenChanel()
 	return appObj, nil
 }
 
@@ -60,24 +57,4 @@ func Run() error {
 	err := http.ListenAndServe(app.flagsConf.String(), app.router)
 	app.logZap.Log.Error("Error run server", zap.Error(err))
 	return err
-}
-
-func (a *app) listenChanel() {
-	ticker := time.NewTicker(1 * time.Second)
-
-	var orderInfoList []*handlersmodels.OrderInfo
-	for {
-		select {
-		case orderInfo := <-a.hndlrs.Ch:
-			orderInfoList = append(orderInfoList, orderInfo)
-		case <-ticker.C:
-			if len(orderInfoList) == 0 {
-				continue
-			}
-			for _, orderInfo := range orderInfoList {
-				a.workAPI.RegisterOrderNumber(orderInfo)
-			}
-			orderInfoList = nil
-		}
-	}
 }

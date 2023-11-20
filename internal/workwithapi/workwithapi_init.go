@@ -11,8 +11,12 @@ type WorkAPI struct {
 }
 
 func NewWorkAPI(log *zap.Logger, strg *storage.Storage) *WorkAPI {
-	return &WorkAPI{
+	workAPI := &WorkAPI{
 		log:  log,
 		strg: strg,
 	}
+
+	//go workAPI.registerOrders()
+	go workAPI.getOrdersAccrual()
+	return workAPI
 }

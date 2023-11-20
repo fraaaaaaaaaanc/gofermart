@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (s *Storage) CheckUserLogin(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error) {
+func (s *Storage) CheckUserLoginData(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error) {
 	ctx, cansel := context.WithTimeout(reqLogin.Ctx, time.Second*1)
 	defer cansel()
 

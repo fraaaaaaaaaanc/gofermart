@@ -30,7 +30,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reqLogin.Ctx = r.Context()
-	resLogin, err := h.strg.CheckUserLogin(reqLogin)
+	resLogin, err := h.strg.CheckUserLoginData(reqLogin)
 
 	if err != nil && !errors.Is(err, handlersmodels.ErrMissingDataInTable) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newCookie, err := cookie.NewCookie(resLogin.UserID)
+	newCookie, err := cookie.NewCookie(resLogin.UserID, h.secretKeyJWTToken)
 	if err != nil {
 		http.Error(w, "cookie creation error", http.StatusInternalServerError)
 		h.log.Error("an error occurred when creating a new cookie", zap.Error(err))

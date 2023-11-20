@@ -13,17 +13,29 @@ var ErrConflictOrderNumberSameUser = errors.New("data conflict, the order number
 
 type ReqOrder struct {
 	OrderNumber string
-	UserID      int
 	OrderStatus string
+	UserID      int
 	Ctx         context.Context
 }
 
-type OrderInfo struct {
-	OrderNumber string  `json:"order"`
-	Goods       []Goods `json:"goods"`
-}
-
-type Goods struct {
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-}
+//type ReqOrder struct {
+//	OrderStatus string
+//	Ctx         context.Context
+//	OrderInfo
+//}
+//
+//type OrderInfo struct {
+//	OrderID int
+//	UserID  int
+//	OrderDescription
+//}
+//
+//type OrderDescription struct {
+//	OrderNumber string  `json:"order"`
+//	Goods       []Goods `json:"goods"`
+//}
+//
+//type Goods struct {
+//	Description string  `json:"description"`
+//	Price       float64 `json:"price"`
+//}

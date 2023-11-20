@@ -3,23 +3,22 @@ package allhandlers
 import (
 	"github.com/go-playground/validator"
 	"go.uber.org/zap"
-	"gofermart/internal/models/handlersmodels"
 	"gofermart/internal/storage"
 )
 
 type Handlers struct {
-	log       *zap.Logger
-	validator *validator.Validate
-	strg      *storage.Storage
-	Ch        chan *handlersmodels.OrderInfo
+	log               *zap.Logger
+	validator         *validator.Validate
+	strg              *storage.Storage
+	secretKeyJWTToken string
 }
 
-func NewHandlers(logger *zap.Logger, storage *storage.Storage) Handlers {
+func NewHandlers(logger *zap.Logger, storage *storage.Storage, secretKeyJWTToken string) Handlers {
 	valid := validator.New()
 	return Handlers{
-		log:       logger,
-		strg:      storage,
-		validator: valid,
-		Ch:        make(chan *handlersmodels.OrderInfo, 100),
+		log:               logger,
+		strg:              storage,
+		validator:         valid,
+		secretKeyJWTToken: secretKeyJWTToken,
 	}
 }

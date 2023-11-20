@@ -52,7 +52,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newCookie, err := cookie.NewCookie(userID)
+	newCookie, err := cookie.NewCookie(userID, h.secretKeyJWTToken)
 	if err != nil {
 		http.Error(w, "cookie creation error", http.StatusInternalServerError)
 		h.log.Error("an error occurred when creating a new cookie", zap.Error(err))

@@ -1,47 +1,54 @@
 package allhandlers
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 	"go.uber.org/zap"
 	cookiemodels "gofermart/internal/models/cookie"
 	"gofermart/internal/models/handlersmodels"
+	"gofermart/internal/models/orderstatuses"
 	"gofermart/internal/utils"
+	"io"
 	"net/http"
 )
 
 func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
-	var orderInfo handlersmodels.OrderInfo
-	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&orderInfo); err != nil {
-		http.Error(w, "error reading the request body", http.StatusBadRequest)
-		h.log.Error("invalid request format", zap.Error(err))
-		return
-	}
-	//body, err := io.ReadAll(r.Body)
-	//if err != nil {
+	//var orderInfo handlersmodels.OrderInfo
+	//dec := json.NewDecoder(r.Body)
+	//if err := dec.Decode(&orderInfo); err != nil {
 	//	http.Error(w, "error reading the request body", http.StatusBadRequest)
 	//	h.log.Error("invalid request format", zap.Error(err))
 	//	return
 	//}
+	orderNumber, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "error reading the request body", http.StatusBadRequest)
+		h.log.Error("invalid request format", zap.Error(err))
+		return
+	}
 	defer r.Body.Close()
-	fmt.Println(orderInfo)
 
-	if err := utils.IsLuhnValid(orderInfo.OrderNumber); err != nil {
+	if err = utils.IsLuhnValid(string(orderNumber)); err != nil {
 		http.Error(w, "the number ordered did not pass verification", http.StatusUnprocessableEntity)
 		h.log.Error("invalid order number format", zap.Error(err))
 		return
 	}
 
-	reqOrders := &handlersmodels.ReqOrder{
-		OrderNumber: orderInfo.OrderNumber,
-		UserID:      r.Context().Value(cookiemodels.UserID).(int),
-		OrderStatus: "NEW",
+	//userID := r.Context().Value(cookiemodels.UserID).(int)
+	//orderInfo.UserID = userID
+	//reqOrder := &handlersmodels.ReqOrder{
+	//	OrderStatus: orderstatuses.NEW,
+	//	Ctx:         r.Context(),
+	//	OrderInfo:   orderInfo,
+	//}
+
+	userID := r.Context().Value(cookiemodels.UserID).(int)
+	reqOrder := &handlersmodels.ReqOrder{
+		OrderStatus: orderstatuses.NEW,
+		OrderNumber: string(orderNumber),
+		UserID:      userID,
 		Ctx:         r.Context(),
 	}
-
-	err := h.strg.AddNewOrder(reqOrders)
+	err = h.strg.AddNewOrder(reqOrder)
 	if err != nil &&
 		!errors.Is(err, handlersmodels.ErrConflictOrderNumberAnotherUser) &&
 		!errors.Is(err, handlersmodels.ErrConflictOrderNumberSameUser) {
@@ -61,6 +68,5 @@ func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Ch <- &orderInfo
 	w.WriteHeader(http.StatusAccepted)
 }

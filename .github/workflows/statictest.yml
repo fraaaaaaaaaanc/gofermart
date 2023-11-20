@@ -17,11 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download statictest binary
+      - name: Download autotests binary
         uses: robinraju/release-downloader@v1.8
         with:
           repository: Yandex-Practicum/go-autotests-bin
-          tag: "v0.9.16"
+          tag: "v0.10.2"
           fileName: statictest
           out-file-path: .tools
 

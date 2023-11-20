@@ -16,6 +16,10 @@ func ParseEnv(flags *Flags) {
 		flags.Set(host)
 	}
 
+	if secretKeyJwtToken := os.Getenv("SECRET_KEY_FOR_COOKIE_TOKEN"); secretKeyJwtToken != "" {
+		flags.SecretKeyJWTToken = secretKeyJwtToken
+	}
+
 	if dataBaseURI := os.Getenv("DATABASE_URI"); dataBaseURI != "" {
 		flags.DataBaseURI = dataBaseURI
 	}

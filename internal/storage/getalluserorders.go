@@ -28,9 +28,6 @@ func (s *Storage) GetAllUserOrders(ctx context.Context) ([]handlersmodels.RespGe
 			&uploadedAt); err != nil {
 			return nil, err
 		}
-		if err != nil {
-			return nil, err
-		}
 		orderInfo.UploadedAt = uploadedAt.Format(time.RFC3339)
 		respGetOrders = append(respGetOrders, orderInfo)
 	}
