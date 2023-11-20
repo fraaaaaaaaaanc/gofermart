@@ -38,7 +38,7 @@ func NewApp() (*app, error) {
 	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
 	if err != nil {
 		log.Error("Error", zap.Error(err))
-		//panic(err)
+		panic(err)
 	}
 
 	appObj := &app{
