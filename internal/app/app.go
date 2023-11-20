@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
 	"gofermart/internal/config"
@@ -25,16 +26,19 @@ func NewApp() (*app, error) {
 	flags := config.ParseConfFlags()
 	log, err := logger.NewZapLogger(flags.LogFilePath, flags.ProjLvl)
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 	strg, err := storage.NewStorage(flags.DataBaseURI, log.Log)
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
 	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
 	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 
