@@ -31,14 +31,14 @@ func NewApp() (*app, error) {
 	strg, err := storage.NewStorage(flags.DataBaseURI, log.Log)
 	if err != nil {
 		log.Error("Error", zap.Error(err))
-		panic(err)
+		//panic(err)
 	}
 	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
 	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
 	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
 	if err != nil {
 		log.Error("Error", zap.Error(err))
-		panic(err)
+		//panic(err)
 	}
 
 	appObj := &app{

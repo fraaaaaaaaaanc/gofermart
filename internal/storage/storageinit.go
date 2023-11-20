@@ -100,9 +100,6 @@ func NewStorage(storageDBAddress string, log *zap.Logger) (*Storage, error) {
 	//    END IF;
 	//END $$;
 	//`)
-	if err != nil {
-		return nil, err
-	}
 	return &Storage{
 		DB:  db,
 		log: log,
