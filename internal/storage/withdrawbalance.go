@@ -25,7 +25,7 @@ func (s *Storage) WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error 
 
 		if err != nil {
 			var pgErr *pgconn.PgError
-			if errors.As(err, &pgErr) && pgErr.Code == "CHECK_VIOLATION" {
+			if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.CheckViolation {
 				err = handlersmodels.ErrNegativeBalanceValue
 			}
 			return err
