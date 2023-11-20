@@ -18,7 +18,11 @@ func (w *WorkAPI) RegisterOrderNumber(ordersInfo []*workwithapimodels.UnRegister
 		resp, err := http.Post("http://localhost:8080/api/orders",
 			"application/json",
 			bytes.NewBuffer(orderInfoJSON))
-		defer resp.Body.Close()
+		defer func() {
+			if err = resp.Body.Close(); err != nil {
+				w.log.Error("request body closing error", zap.Error(err))
+			}
+		}()
 
 		if err != nil {
 			w.log.Error("error sending a POST http://localhost:8080/api/orders request to the bonus points "+

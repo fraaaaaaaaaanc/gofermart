@@ -6,7 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-var ErrNegativeBalanceValue = errors.New("Insufficient funds to debit bonuses")
+var ErrNegativeBalanceValue = errors.New("insufficient funds to debit bonuses")
 
 var ErrAddHistoryBalance = errors.New("error when adding data to the table history_balance")
 
