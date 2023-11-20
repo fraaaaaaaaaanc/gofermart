@@ -26,12 +26,12 @@ func NewApp() (*app, error) {
 	log, err := logger.NewZapLogger(flags.LogFilePath, flags.ProjLvl)
 	if err != nil {
 		log.Error("Error", zap.Error(err))
-		panic(err)
+		//panic(err)
 	}
 	strg, err := storage.NewStorage(flags.DataBaseURI, log.Log)
 	if err != nil {
 		log.Error("Error", zap.Error(err))
-		//panic(err)
+		panic(err)
 	}
 	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
 	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
