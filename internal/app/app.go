@@ -34,7 +34,7 @@ func NewApp() (*app, error) {
 		panic(err)
 	}
 	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
-	workAPI := workwithapi.NewWorkAPI(log.Log, strg)
+	workAPI := workwithapi.NewWorkAPI(log.Log, strg, flags.AccrualSystemAddress)
 	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
 	if err != nil {
 		log.Error("Error", zap.Error(err))

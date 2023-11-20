@@ -17,7 +17,7 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*workwithapimodels.Res
 
 		switch resp.StatusCode {
 		case http.StatusOK:
-			w.log.Info("GET request http://localhost:8080/api/orders/{order} status success")
+			w.log.Info("GET request /api/orders/{order} status success")
 			var respGetRequest workwithapimodels.RespGetRequest
 			dec := json.NewDecoder(resp.Body)
 			if err := dec.Decode(&respGetRequest); err != nil {

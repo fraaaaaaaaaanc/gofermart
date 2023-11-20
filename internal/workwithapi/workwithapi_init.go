@@ -6,14 +6,16 @@ import (
 )
 
 type WorkAPI struct {
-	log  *zap.Logger
-	strg *storage.Storage
+	accrualSystemAddress string
+	log                  *zap.Logger
+	strg                 *storage.Storage
 }
 
-func NewWorkAPI(log *zap.Logger, strg *storage.Storage) *WorkAPI {
+func NewWorkAPI(log *zap.Logger, strg *storage.Storage, accrualSystemAddress string) *WorkAPI {
 	workAPI := &WorkAPI{
-		log:  log,
-		strg: strg,
+		accrualSystemAddress: accrualSystemAddress,
+		log:                  log,
+		strg:                 strg,
 	}
 
 	//go workAPI.registerOrders()
