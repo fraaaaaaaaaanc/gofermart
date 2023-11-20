@@ -1,8 +1,6 @@
 package handlersmodels
 
-import "github.com/shopspring/decimal"
-
 type RespUserBalance struct {
-	UserBalance      decimal.Decimal `json:"current"`
-	WithdrawnBalance decimal.Decimal `json:"withdrawn"`
+	UserBalance      float64 `json:"current"`
+	WithdrawnBalance float64 `json:"withdrawn"`
 }
