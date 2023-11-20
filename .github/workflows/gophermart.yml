@@ -35,8 +35,8 @@ jobs:
         with:
           repository: Yandex-Practicum/go-autotests-bin
           latest: true 
-          # fileName: "*"
-          # out-file-path: .tools
+          fileName: "*"
+          out-file-path: .tools
 
       - name: Setup autotest binary
         run: |
