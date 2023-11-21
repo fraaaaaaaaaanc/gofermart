@@ -18,7 +18,6 @@ func NewWorkAPI(log *zap.Logger, strg *storage.Storage, accrualSystemAddress str
 		strg:                 strg,
 	}
 
-	//go workAPI.registerOrders()
 	go workAPI.getOrdersAccrual()
 	return workAPI
 }

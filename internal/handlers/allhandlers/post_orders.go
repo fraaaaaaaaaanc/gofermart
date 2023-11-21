@@ -12,13 +12,6 @@ import (
 )
 
 func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
-	//var orderInfo handlersmodels.OrderInfo
-	//dec := json.NewDecoder(r.Body)
-	//if err := dec.Decode(&orderInfo); err != nil {
-	//	http.Error(w, "error reading the request body", http.StatusBadRequest)
-	//	h.log.Error("invalid request format", zap.Error(err))
-	//	return
-	//}
 	orderNumber, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "error reading the request body", http.StatusBadRequest)
@@ -32,14 +25,6 @@ func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
 		h.log.Error("invalid order number format", zap.Error(err))
 		return
 	}
-
-	//userID := r.Context().Value(cookiemodels.UserID).(int)
-	//orderInfo.UserID = userID
-	//reqOrder := &handlersmodels.ReqOrder{
-	//	OrderStatus: orderstatuses.NEW,
-	//	Ctx:         r.Context(),
-	//	OrderInfo:   orderInfo,
-	//}
 
 	userID := r.Context().Value(cookiemodels.UserID).(int)
 	reqOrder := &handlersmodels.ReqOrder{
