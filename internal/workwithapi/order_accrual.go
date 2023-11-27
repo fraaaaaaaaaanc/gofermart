@@ -15,27 +15,27 @@ func (w *WorkAPI) getOrdersAccrual() {
 	for range ticker.C {
 		ticker.Reset(time.Second * 5)
 		unAccrualOrdersList, err := w.strg.GetAllUnAccrualOrders()
-		if err != nil && !errors.Is(err, work_with_api_models.ErrNoOrdersForAcrrual) {
+		if err != nil && !errors.Is(err, workwithapimodels.ErrNoOrdersForAcrrual) {
 			logger.Error("error when working with the database at the time of receiving the list of "+
 				"outstanding orders", zap.Error(err))
 			continue
 		}
-		if errors.Is(err, work_with_api_models.ErrNoOrdersForAcrrual) {
+		if errors.Is(err, workwithapimodels.ErrNoOrdersForAcrrual) {
 			logger.Info("no orders", zap.Error(err))
 			continue
 		}
 		resGetOrdersAccrual, err := w.getOrderAccrual(unAccrualOrdersList)
 		if err != nil &&
-			!errors.Is(err, work_with_api_models.ErrRequestCount) &&
-			!errors.Is(err, work_with_api_models.ErrNoRespAPI) {
+			!errors.Is(err, workwithapimodels.ErrRequestCount) &&
+			!errors.Is(err, workwithapimodels.ErrNoRespAPI) {
 			logger.Error("error when receiving order accrual statuses", zap.Error(err))
 			continue
 		}
-		if errors.Is(err, work_with_api_models.ErrNoRespAPI) {
+		if errors.Is(err, workwithapimodels.ErrNoRespAPI) {
 			logger.Error("no responses", zap.Error(err))
 			continue
 		}
-		if errors.Is(err, work_with_api_models.ErrRequestCount) {
+		if errors.Is(err, workwithapimodels.ErrRequestCount) {
 			ticker.Reset(time.Second * time.Duration(resGetOrdersAccrual.TimeRetryAfter))
 		}
 		if err = w.strg.UpdateOrdersStatusAndAccrual(resGetOrdersAccrual); err != nil {
@@ -43,11 +43,11 @@ func (w *WorkAPI) getOrdersAccrual() {
 			continue
 		}
 		usersOrdersAccrualList, err := w.strg.GetCalculatedUsers()
-		if err != nil && !errors.Is(err, work_with_api_models.ErrNoUsers) {
+		if err != nil && !errors.Is(err, workwithapimodels.ErrNoUsers) {
 			logger.Error("error when receiving users and points for their calculated orders", zap.Error(err))
 			continue
 		}
-		if errors.Is(err, work_with_api_models.ErrNoUsers) {
+		if errors.Is(err, workwithapimodels.ErrNoUsers) {
 			logger.Error("no users", zap.Error(err))
 			continue
 		}

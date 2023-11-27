@@ -1,11 +1,11 @@
-package storage_db
+package storagedb
 
 import (
 	"gofermart/internal/models/orderstatuses"
-	"gofermart/internal/models/work_with_api_models"
+	workwithapimodels "gofermart/internal/models/work_with_api_models"
 )
 
-func (s *Storage) GetCalculatedUsers() ([]work_with_api_models.UsersOrdersAccrual, error) {
+func (s *Storage) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, error) {
 	rows, err := s.db.Query("SELECT user_id, accrual FROM order_accrual "+
 		"WHERE order_status_accrual = $1",
 		orderstatuses.PROCESSED)
@@ -14,9 +14,9 @@ func (s *Storage) GetCalculatedUsers() ([]work_with_api_models.UsersOrdersAccrua
 	}
 	defer rows.Close()
 
-	var usersOrdersAccrualList []work_with_api_models.UsersOrdersAccrual
+	var usersOrdersAccrualList []workwithapimodels.UsersOrdersAccrual
 	for rows.Next() {
-		var usersOrdersAccrual work_with_api_models.UsersOrdersAccrual
+		var usersOrdersAccrual workwithapimodels.UsersOrdersAccrual
 		if err = rows.Scan(&usersOrdersAccrual.UserID, &usersOrdersAccrual.OrderAccrual); err != nil {
 			return nil, err
 		}
@@ -29,7 +29,7 @@ func (s *Storage) GetCalculatedUsers() ([]work_with_api_models.UsersOrdersAccrua
 	}
 
 	if usersOrdersAccrualList == nil {
-		return nil, work_with_api_models.ErrNoUsers
+		return nil, workwithapimodels.ErrNoUsers
 	}
 
 	return usersOrdersAccrualList, nil

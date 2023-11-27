@@ -1,8 +1,8 @@
-package storage_db
+package storagedb
 
 import (
 	"gofermart/internal/models/orderstatuses"
-	"gofermart/internal/models/work_with_api_models"
+	workwithapimodels "gofermart/internal/models/work_with_api_models"
 )
 
 func (s *Storage) GetAllUnAccrualOrders() ([]string, error) {
@@ -28,7 +28,7 @@ func (s *Storage) GetAllUnAccrualOrders() ([]string, error) {
 	}
 
 	if ordersList == nil {
-		return nil, work_with_api_models.ErrNoOrdersForAcrrual
+		return nil, workwithapimodels.ErrNoOrdersForAcrrual
 	}
 
 	return ordersList, nil

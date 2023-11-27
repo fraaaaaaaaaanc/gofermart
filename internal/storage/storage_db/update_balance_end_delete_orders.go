@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (s *Storage) UpdateBalance(usersOrdersAccrualList []work_with_api_models.UsersOrdersAccrual) error {
+func (s *Storage) UpdateBalance(usersOrdersAccrualList []workwithapimodels.UsersOrdersAccrual) error {
 	ctx, cansel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cansel()
 

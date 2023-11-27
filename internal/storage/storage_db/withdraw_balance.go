@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (s *Storage) WithdrawBalance(reqWithdraw handlers_models.ReqWithdraw) error {
+func (s *Storage) WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error {
 	ctx, cansel := context.WithTimeout(reqWithdraw.Ctx, time.Second*1)
 	defer cansel()
 
@@ -26,7 +26,7 @@ func (s *Storage) WithdrawBalance(reqWithdraw handlers_models.ReqWithdraw) error
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.CheckViolation {
-				err = handlers_models.ErrNegativeBalanceValue
+				err = handlersmodels.ErrNegativeBalanceValue
 			}
 			return err
 		}
@@ -39,7 +39,7 @@ func (s *Storage) WithdrawBalance(reqWithdraw handlers_models.ReqWithdraw) error
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
-				err = handlers_models.ErrDuplicateOrderNumberHistoryBalance
+				err = handlersmodels.ErrDuplicateOrderNumberHistoryBalance
 			}
 			return err
 		}

@@ -22,11 +22,11 @@ func TestWithDraw(t *testing.T) {
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
-		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(handlers_models.ErrDuplicateOrderNumber),
+		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(handlersmodels.ErrDuplicateOrderNumber),
 		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlers_models.ErrNegativeBalanceValue),
+		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlersmodels.ErrNegativeBalanceValue),
 		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlers_models.ErrDuplicateOrderNumberHistoryBalance),
+		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlersmodels.ErrDuplicateOrderNumberHistoryBalance),
 		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(nil),
 	)

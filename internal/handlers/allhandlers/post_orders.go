@@ -28,7 +28,7 @@ func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := r.Context().Value(cookiemodels.UserID).(int)
-	reqOrder := &handlers_models.ReqOrder{
+	reqOrder := &handlersmodels.ReqOrder{
 		OrderStatus: orderstatuses.NEW,
 		OrderNumber: string(orderNumber),
 		UserID:      userID,
@@ -36,20 +36,20 @@ func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.strg.AddNewOrder(reqOrder)
 	if err != nil &&
-		!errors.Is(err, handlers_models.ErrConflictOrderNumberAnotherUser) &&
-		!errors.Is(err, handlers_models.ErrConflictOrderNumberSameUser) {
+		!errors.Is(err, handlersmodels.ErrConflictOrderNumberAnotherUser) &&
+		!errors.Is(err, handlersmodels.ErrConflictOrderNumberSameUser) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		logger.Error("error when adding the user's user_id and order_number to the database", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlers_models.ErrConflictOrderNumberAnotherUser) {
+	if errors.Is(err, handlersmodels.ErrConflictOrderNumberAnotherUser) {
 		http.Error(w, "order_number uniqueness error", http.StatusConflict)
 		logger.Error("the order_number sent by the user already exists in the database", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlers_models.ErrConflictOrderNumberSameUser) {
+	if errors.Is(err, handlersmodels.ErrConflictOrderNumberSameUser) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}

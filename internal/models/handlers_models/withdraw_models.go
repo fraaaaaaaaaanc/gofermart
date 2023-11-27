@@ -1,4 +1,4 @@
-package handlers_models
+package handlersmodels
 
 import (
 	"context"

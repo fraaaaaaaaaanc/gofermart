@@ -27,7 +27,7 @@ func NewApp() (*app, error) {
 	if err != nil {
 		panic(err)
 	}
-	strg, err := storage_db.NewStorage(flags.DataBaseURI)
+	strg, err := storagedb.NewStorage(flags.DataBaseURI)
 	if err != nil {
 		panic(err)
 	}

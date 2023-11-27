@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"go.uber.org/zap"

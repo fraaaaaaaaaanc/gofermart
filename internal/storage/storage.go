@@ -8,19 +8,19 @@ import (
 )
 
 type StorageMock interface {
-	AddNewOrder(reqOrder *handlers_models.ReqOrder) error
-	AddNewUser(reqChanelRegister *handlers_models.RequestRegister) (int, error)
+	AddNewOrder(reqOrder *handlersmodels.ReqOrder) error
+	AddNewUser(reqChanelRegister *handlersmodels.RequestRegister) (int, error)
 	CheckOrderNumber(ctx context.Context, orderNumber string) error
-	CheckUserLoginData(reqLogin *handlers_models.RequestLogin) (*handlers_models.ResultLogin, error)
+	CheckUserLoginData(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error)
 	DeleteOrders(tx *sql.Tx) error
 	GetAllUnAccrualOrders() ([]string, error)
-	GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdrawalsHistory, error)
-	GetAllUserOrders(userID int) ([]handlers_models.RespGetOrders, error)
-	GetCalculatedUsers() ([]work_with_api_models.UsersOrdersAccrual, error)
-	GetUserBalance(ctx context.Context) (*handlers_models.RespUserBalance, error)
-	UpdateBalance(usersOrdersAccrualList []work_with_api_models.UsersOrdersAccrual) error
-	UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *work_with_api_models.ResGetOrderAccrual) error
+	GetAllHistoryBalance(userID int) ([]handlersmodels.RespWithdrawalsHistory, error)
+	GetAllUserOrders(userID int) ([]handlersmodels.RespGetOrders, error)
+	GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, error)
+	GetUserBalance(ctx context.Context) (*handlersmodels.RespUserBalance, error)
+	UpdateBalance(usersOrdersAccrualList []workwithapimodels.UsersOrdersAccrual) error
+	UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *workwithapimodels.ResGetOrderAccrual) error
 	UpdateOrderStatus(orderNumber string) error
-	WithdrawBalance(reqWithdraw handlers_models.ReqWithdraw) error
+	WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error
 	CloseDB()
 }

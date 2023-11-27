@@ -1,11 +1,11 @@
-package storage_db
+package storagedb
 
 import (
 	"gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdrawalsHistory, error) {
+func (s *Storage) GetAllHistoryBalance(userID int) ([]handlersmodels.RespWithdrawalsHistory, error) {
 	rows, err := s.db.Query("SELECT order_number_unregister, withdrawn_sum, withdrawn_datetime FROM history_balance "+
 		"WHERE user_id = $1 ORDER BY withdrawn_datetime ASC",
 		userID)
@@ -14,9 +14,9 @@ func (s *Storage) GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdr
 	}
 	defer rows.Close()
 
-	var respWithdrawalsHistory []handlers_models.RespWithdrawalsHistory
+	var respWithdrawalsHistory []handlersmodels.RespWithdrawalsHistory
 	for rows.Next() {
-		var withdrawal handlers_models.RespWithdrawalsHistory
+		var withdrawal handlersmodels.RespWithdrawalsHistory
 		var processedAt time.Time
 		if err = rows.Scan(&withdrawal.OrderNumber,
 			&withdrawal.SumWithdraw,
@@ -24,9 +24,6 @@ func (s *Storage) GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdr
 			return nil, err
 		}
 		withdrawal.ProcessedAt = processedAt.Format(time.RFC3339)
-		if err != nil {
-			return nil, err
-		}
 
 		respWithdrawalsHistory = append(respWithdrawalsHistory, withdrawal)
 	}
@@ -36,7 +33,7 @@ func (s *Storage) GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdr
 	}
 
 	if respWithdrawalsHistory == nil {
-		return nil, handlers_models.ErrTheAreNoWithdraw
+		return nil, handlersmodels.ErrTheAreNoWithdraw
 	}
 	return respWithdrawalsHistory, nil
 }

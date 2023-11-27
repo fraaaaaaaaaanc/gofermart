@@ -12,7 +12,7 @@ import (
 )
 
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
-	var reqRegister handlers_models.RequestRegister
+	var reqRegister handlersmodels.RequestRegister
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqRegister); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
@@ -42,13 +42,13 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	reqRegister.Ctx = r.Context()
 	userID, err := h.strg.AddNewUser(&reqRegister)
 
-	if err != nil && !errors.Is(err, handlers_models.ErrConflictLoginRegister) {
+	if err != nil && !errors.Is(err, handlersmodels.ErrConflictLoginRegister) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		logger.Error("error when adding the user's username and password to the database", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlers_models.ErrConflictLoginRegister) {
+	if errors.Is(err, handlersmodels.ErrConflictLoginRegister) {
 		http.Error(w, "login uniqueness error", http.StatusConflict)
 		logger.Error("the login sent by the user already exists in the database", zap.Error(err))
 		return

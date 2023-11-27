@@ -1,4 +1,4 @@
-package utils_models
+package utilsmodels
 
 import "errors"
 

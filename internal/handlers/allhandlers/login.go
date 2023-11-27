@@ -12,7 +12,7 @@ import (
 )
 
 func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
-	var reqLogin *handlers_models.RequestLogin
+	var reqLogin *handlersmodels.RequestLogin
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqLogin); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
@@ -33,15 +33,15 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 	reqLogin.Ctx = r.Context()
 	resLogin, err := h.strg.CheckUserLoginData(reqLogin)
 
-	if err != nil && !errors.Is(err, handlers_models.ErrMissingDataInTable) {
+	if err != nil && !errors.Is(err, handlersmodels.ErrMissingDataInTable) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		logger.Error("error when searching for data in the table", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlers_models.ErrMissingDataInTable) {
+	if errors.Is(err, handlersmodels.ErrMissingDataInTable) {
 		http.Error(w, "authentication error: login not found", http.StatusUnauthorized)
-		logger.Error("invalid login/password pair", zap.Error(handlers_models.ErrMissingDataInTable))
+		logger.Error("invalid login/password pair", zap.Error(handlersmodels.ErrMissingDataInTable))
 		return
 	}
 

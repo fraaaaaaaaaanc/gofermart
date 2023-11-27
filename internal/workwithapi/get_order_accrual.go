@@ -10,8 +10,8 @@ import (
 	"strconv"
 )
 
-func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*work_with_api_models.ResGetOrderAccrual, error) {
-	var respGetOrderAccrual work_with_api_models.ResGetOrderAccrual
+func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*workwithapimodels.ResGetOrderAccrual, error) {
+	var respGetOrderAccrual workwithapimodels.ResGetOrderAccrual
 	for _, orderNumber := range ordersNumber {
 		resp := w.GetRequestOrderAccrual(orderNumber)
 		defer resp.Body.Close()
@@ -19,7 +19,7 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*work_with_api_models.
 		switch resp.StatusCode {
 		case http.StatusOK:
 			logger.Info("GET request /api/orders/{order} status success")
-			var respGetRequest work_with_api_models.RespGetRequest
+			var respGetRequest workwithapimodels.RespGetRequest
 			dec := json.NewDecoder(resp.Body)
 			if err := dec.Decode(&respGetRequest); err != nil {
 				logger.Error("error forming the Get Request response "+
@@ -38,7 +38,7 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*work_with_api_models.
 				return &respGetOrderAccrual, err
 			}
 			respGetOrderAccrual.TimeRetryAfter = timeRetryAfter
-			return &respGetOrderAccrual, work_with_api_models.ErrRequestCount
+			return &respGetOrderAccrual, workwithapimodels.ErrRequestCount
 		case http.StatusInternalServerError:
 			logger.Error("internal server error when sending GET request " +
 				"\"http://localhost:8080/api/orders/{number}\"")
@@ -46,7 +46,7 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*work_with_api_models.
 	}
 	fmt.Println(&respGetOrderAccrual.RespGetRequestList)
 	if respGetOrderAccrual.RespGetRequestList == nil {
-		return nil, work_with_api_models.ErrNoRespAPI
+		return nil, workwithapimodels.ErrNoRespAPI
 	}
 	return &respGetOrderAccrual, nil
 }

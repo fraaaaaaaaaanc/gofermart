@@ -1,14 +1,14 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
 	"database/sql"
 	"errors"
-	"gofermart/internal/models/handlers_models"
+	handlersmodels "gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) CheckUserLoginData(reqLogin *handlers_models.RequestLogin) (*handlers_models.ResultLogin, error) {
+func (s *Storage) CheckUserLoginData(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error) {
 	ctx, cansel := context.WithTimeout(reqLogin.Ctx, time.Second*1)
 	defer cansel()
 
@@ -21,12 +21,12 @@ func (s *Storage) CheckUserLoginData(reqLogin *handlers_models.RequestLogin) (*h
 	err := row.Scan(&userID, &password)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, handlers_models.ErrMissingDataInTable
+			return nil, handlersmodels.ErrMissingDataInTable
 		} else {
 			return nil, err
 		}
 	}
-	return &handlers_models.ResultLogin{
+	return &handlersmodels.ResultLogin{
 		UserID:   userID,
 		Password: password,
 	}, nil

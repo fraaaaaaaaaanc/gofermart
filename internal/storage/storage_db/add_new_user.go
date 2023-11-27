@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"errors"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
-	"gofermart/internal/models/handlers_models"
+	handlersmodels "gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) AddNewUser(reqChanelRegister *handlers_models.RequestRegister) (int, error) {
+func (s *Storage) AddNewUser(reqChanelRegister *handlersmodels.RequestRegister) (int, error) {
 	ctx, cansel := context.WithTimeout(reqChanelRegister.Ctx, time.Second*1)
 	defer cansel()
 
@@ -25,7 +25,7 @@ func (s *Storage) AddNewUser(reqChanelRegister *handlers_models.RequestRegister)
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) && pgerrcode.UniqueViolation == pgErr.Code {
-				return handlers_models.ErrConflictLoginRegister
+				return handlersmodels.ErrConflictLoginRegister
 			} else {
 				return err
 			}

@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (s *Storage) UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *work_with_api_models.ResGetOrderAccrual) error {
+func (s *Storage) UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *workwithapimodels.ResGetOrderAccrual) error {
 	ctx, cansel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cansel()
 
@@ -31,23 +31,6 @@ func (s *Storage) UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *work_with_ap
 		}
 		return nil
 	})
-	//_, err = tx.ExecContext(ctx,
-	//	"UPDATE orders SET order_status = ANY ($1), accrual = ANY ($2) "+
-	//		"WHERE order_number = ANY ($3)",
-	//	resGetOrdersAccrual.OrdersStatuses, resGetOrdersAccrual.OrdersAccruals, resGetOrdersAccrual.OrdersNumbers)
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
-	//
-	//_, err = tx.ExecContext(ctx,
-	//	"UPDATE order_accrual SET order_status_accrual = ANY ($1) "+
-	//		"WHERE order_number = ANY ($2)",
-	//	resGetOrdersAccrual.OrdersStatuses, resGetOrdersAccrual.OrdersNumbers)
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
 
 	return err
 }

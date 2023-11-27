@@ -25,9 +25,9 @@ func TestGetOrders(t *testing.T) {
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
-		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(nil, handlers_models.ErrTheAreNoOrders),
+		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(nil, handlersmodels.ErrTheAreNoOrders),
 		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(
-			[]handlers_models.RespGetOrders{
+			[]handlersmodels.RespGetOrders{
 				{
 					OrderNumber: "545454545454",
 					Status:      orderstatuses.PROCESSED,

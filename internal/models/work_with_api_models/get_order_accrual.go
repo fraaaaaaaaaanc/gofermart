@@ -1,4 +1,4 @@
-package work_with_api_models
+package workwithapimodels
 
 import (
 	"errors"

@@ -20,24 +20,24 @@ func TestLogin(t *testing.T) {
 	mockStorage := mock.NewMockStorageMock(ctrl)
 	hndlr := allhandlers.NewHandlers(mockStorage, "test")
 
-	gomock.InOrder(mockStorage.EXPECT().CheckUserLoginData(&handlers_models.RequestLogin{
+	gomock.InOrder(mockStorage.EXPECT().CheckUserLoginData(&handlersmodels.RequestLogin{
 		Login:    "123",
 		Password: "123",
 		Ctx:      context.Background(),
-	}).Return(nil, handlers_models.ErrMissingDataInTable),
-		mockStorage.EXPECT().CheckUserLoginData(&handlers_models.RequestLogin{
+	}).Return(nil, handlersmodels.ErrMissingDataInTable),
+		mockStorage.EXPECT().CheckUserLoginData(&handlersmodels.RequestLogin{
 			Login:    "test",
 			Password: "1234",
 			Ctx:      context.Background(),
-		}).Return(&handlers_models.ResultLogin{
+		}).Return(&handlersmodels.ResultLogin{
 			UserID:   1,
 			Password: "$2a$10$w2Ksuvu8yOKxYB6rt9hh6u9axDbLQ0fRYWzepHeB2p.P1dHdl9Ea2",
 		}, nil),
-		mockStorage.EXPECT().CheckUserLoginData(&handlers_models.RequestLogin{
+		mockStorage.EXPECT().CheckUserLoginData(&handlersmodels.RequestLogin{
 			Login:    "test",
 			Password: "123",
 			Ctx:      context.Background(),
-		}).Return(&handlers_models.ResultLogin{
+		}).Return(&handlersmodels.ResultLogin{
 			UserID:   1,
 			Password: "$2a$10$w2Ksuvu8yOKxYB6rt9hh6u9axDbLQ0fRYWzepHeB2p.P1dHdl9Ea2",
 		}, nil))

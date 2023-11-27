@@ -22,9 +22,9 @@ func TestWithdrawals(t *testing.T) {
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
-		mockStorage.EXPECT().GetAllHistoryBalance(1).Return(nil, handlers_models.ErrTheAreNoWithdraw),
+		mockStorage.EXPECT().GetAllHistoryBalance(1).Return(nil, handlersmodels.ErrTheAreNoWithdraw),
 		mockStorage.EXPECT().GetAllHistoryBalance(2).Return(
-			[]handlers_models.RespWithdrawalsHistory{
+			[]handlersmodels.RespWithdrawalsHistory{
 				{
 					OrderNumber: "2377225624",
 					SumWithdraw: 500,

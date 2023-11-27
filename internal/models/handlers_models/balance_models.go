@@ -1,4 +1,4 @@
-package handlers_models
+package handlersmodels
 
 type RespUserBalance struct {
 	UserBalance      float64 `json:"current"`

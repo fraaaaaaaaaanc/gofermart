@@ -1,4 +1,4 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (s *Storage) AddNewOrder(reqOrder *handlers_models.ReqOrder) error {
+func (s *Storage) AddNewOrder(reqOrder *handlersmodels.ReqOrder) error {
 	ctx, cansel := context.WithTimeout(reqOrder.Ctx, time.Second*1)
 	defer cansel()
 
@@ -35,9 +35,9 @@ func (s *Storage) AddNewOrder(reqOrder *handlers_models.ReqOrder) error {
 				return err
 			}
 			if userID != reqOrder.UserID {
-				return handlers_models.ErrConflictOrderNumberAnotherUser
+				return handlersmodels.ErrConflictOrderNumberAnotherUser
 			} else {
-				return handlers_models.ErrConflictOrderNumberSameUser
+				return handlersmodels.ErrConflictOrderNumberSameUser
 			}
 		}
 
@@ -45,17 +45,6 @@ func (s *Storage) AddNewOrder(reqOrder *handlers_models.ReqOrder) error {
 		if err = row.Scan(&orderID); err != nil {
 			return err
 		}
-
-		//goods := reqOrder.Goods
-		//for _, product := range goods {
-		//	_, err = tx.ExecContext(ctx,
-		//		"INSERT INTO orders_info (order_id, description, price) "+
-		//			"VALUES ($1, $2, $3)",
-		//		orderID, product.Description, product.Price)
-		//	if err != nil {
-		//		return nil, err
-		//	}
-		//}
 
 		_, err = tx.ExecContext(ctx,
 			"INSERT INTO order_accrual (order_id, user_id, order_number, order_status_accrual) "+

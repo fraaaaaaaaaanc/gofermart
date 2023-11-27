@@ -1,13 +1,13 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
 	cookiemodels "gofermart/internal/models/cookie_models"
-	"gofermart/internal/models/handlers_models"
+	handlersmodels "gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) GetUserBalance(ctx context.Context) (*handlers_models.RespUserBalance, error) {
+func (s *Storage) GetUserBalance(ctx context.Context) (*handlersmodels.RespUserBalance, error) {
 	userID := ctx.Value(cookiemodels.UserID).(int)
 
 	newCtx, cansel := context.WithTimeout(ctx, time.Second*1)
@@ -18,7 +18,7 @@ func (s *Storage) GetUserBalance(ctx context.Context) (*handlers_models.RespUser
 			"WHERE user_id = $1",
 		userID)
 
-	respUserBalance := &handlers_models.RespUserBalance{}
+	respUserBalance := &handlersmodels.RespUserBalance{}
 	if err := row.Scan(&respUserBalance.UserBalance, &respUserBalance.WithdrawnBalance); err != nil {
 		return nil, err
 	}

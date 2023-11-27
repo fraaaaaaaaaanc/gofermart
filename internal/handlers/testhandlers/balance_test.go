@@ -23,12 +23,12 @@ func TestBalance(t *testing.T) {
 
 	gomock.InOrder(
 		mockStorage.EXPECT().GetUserBalance(gomock.Any()).Return(
-			&handlers_models.RespUserBalance{
+			&handlersmodels.RespUserBalance{
 				UserBalance:      100,
 				WithdrawnBalance: 0,
 			}, nil),
 		mockStorage.EXPECT().GetUserBalance(gomock.Any()).Return(
-			&handlers_models.RespUserBalance{
+			&handlersmodels.RespUserBalance{
 				UserBalance:      100.8,
 				WithdrawnBalance: 456.2,
 			}, nil),

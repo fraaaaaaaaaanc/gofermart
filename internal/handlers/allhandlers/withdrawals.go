@@ -13,13 +13,13 @@ import (
 func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(cookiemodels.UserID).(int)
 	respWithdrawalsHistory, err := h.strg.GetAllHistoryBalance(userID)
-	if err != nil && !errors.Is(err, handlers_models.ErrTheAreNoWithdraw) {
+	if err != nil && !errors.Is(err, handlersmodels.ErrTheAreNoWithdraw) {
 		http.Error(w, "bonus points have not been debited from this account before", http.StatusNoContent)
 		logger.Error("error forming the response", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlers_models.ErrTheAreNoWithdraw) {
+	if errors.Is(err, handlersmodels.ErrTheAreNoWithdraw) {
 		http.Error(w, "bonus points have not been debited from this account before", http.StatusNoContent)
 		logger.Error("error forming the response", zap.Error(err))
 		return

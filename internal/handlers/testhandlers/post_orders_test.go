@@ -23,24 +23,24 @@ func TestPostOrders(t *testing.T) {
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
-		mockStorage.EXPECT().AddNewOrder(&handlers_models.ReqOrder{
+		mockStorage.EXPECT().AddNewOrder(&handlersmodels.ReqOrder{
 			OrderStatus: orderstatuses.NEW,
 			OrderNumber: "54545454",
 			UserID:      1,
 			Ctx:         context.WithValue(context.Background(), cookiemodels.UserID, 1),
 		}).Return(nil),
-		mockStorage.EXPECT().AddNewOrder(&handlers_models.ReqOrder{
+		mockStorage.EXPECT().AddNewOrder(&handlersmodels.ReqOrder{
 			OrderStatus: orderstatuses.NEW,
 			OrderNumber: "54545454",
 			UserID:      1,
 			Ctx:         context.WithValue(context.Background(), cookiemodels.UserID, 1),
-		}).Return(handlers_models.ErrConflictOrderNumberSameUser),
-		mockStorage.EXPECT().AddNewOrder(&handlers_models.ReqOrder{
+		}).Return(handlersmodels.ErrConflictOrderNumberSameUser),
+		mockStorage.EXPECT().AddNewOrder(&handlersmodels.ReqOrder{
 			OrderStatus: orderstatuses.NEW,
 			OrderNumber: "54545454",
 			UserID:      2,
 			Ctx:         context.WithValue(context.Background(), cookiemodels.UserID, 2),
-		}).Return(handlers_models.ErrConflictOrderNumberAnotherUser),
+		}).Return(handlersmodels.ErrConflictOrderNumberAnotherUser),
 	)
 
 	method := http.MethodPost

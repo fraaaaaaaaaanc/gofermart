@@ -21,7 +21,7 @@ func TestRegister(t *testing.T) {
 
 	gomock.InOrder(
 		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(1, nil),
-		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(0, handlers_models.ErrConflictLoginRegister),
+		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(0, handlersmodels.ErrConflictLoginRegister),
 	)
 
 	method := http.MethodPost

@@ -1,8 +1,8 @@
-package storage_db
+package storagedb
 
 import (
 	"context"
-	"gofermart/internal/models/handlers_models"
+	handlersmodels "gofermart/internal/models/handlers_models"
 )
 
 func (s *Storage) CheckOrderNumber(ctx context.Context, orderNumber string) error {
@@ -14,7 +14,7 @@ func (s *Storage) CheckOrderNumber(ctx context.Context, orderNumber string) erro
 		return err
 	}
 	if exists {
-		return handlers_models.ErrDuplicateOrderNumber
+		return handlersmodels.ErrDuplicateOrderNumber
 	}
 	return nil
 }
