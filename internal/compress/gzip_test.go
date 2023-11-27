@@ -3,7 +3,6 @@ package compress
 import (
 	"bytes"
 	"compress/gzip"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
@@ -25,7 +24,6 @@ func TestMiddlewareCompress(t *testing.T) {
 		assert.NoError(t, err)
 		err = zb.Close()
 		assert.NoError(t, err)
-		fmt.Println(buf)
 
 		request := httptest.NewRequest(http.MethodPost, "/", buf)
 		assert.NoError(t, err)

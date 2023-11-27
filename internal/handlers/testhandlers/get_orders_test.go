@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"gofermart/internal/handlers/allhandlers"
+	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
 	"gofermart/internal/models/orderstatuses"
@@ -16,15 +17,16 @@ import (
 )
 
 func TestGetOrders(t *testing.T) {
+	_ = logger.NewZapLogger("", "local")
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorage(ctrl)
+	mockStorage := mock.NewMockStorageMock(ctrl)
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
-		mockStorage.EXPECT().GetAllUserOrders(1).Return(nil, handlers_models.ErrTheAreNoOrders),
-		mockStorage.EXPECT().GetAllUserOrders(2).Return(
+		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(nil, handlers_models.ErrTheAreNoOrders),
+		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(
 			[]handlers_models.RespGetOrders{
 				{
 					OrderNumber: "545454545454",
@@ -85,7 +87,7 @@ func TestGetOrders(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			request := httptest.NewRequest(method, url, nil)
-			ctx := context.WithValue(request.Context(), cookiemodels.UserID, test.userID)
+			ctx := context.WithValue(request.Context(), cookiemodels.UserID, test.req.userID)
 			request = request.WithContext(ctx)
 			w := httptest.NewRecorder()
 			hndlrs.GetOrders(w, request)

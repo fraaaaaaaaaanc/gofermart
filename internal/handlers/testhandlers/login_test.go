@@ -17,7 +17,7 @@ func TestLogin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorage(ctrl)
+	mockStorage := mock.NewMockStorageMock(ctrl)
 	hndlr := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(mockStorage.EXPECT().CheckUserLoginData(&handlers_models.RequestLogin{

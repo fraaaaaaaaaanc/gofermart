@@ -7,8 +7,8 @@ package mock
 import (
 	context "context"
 	sql "database/sql"
-	handlersmodels "gofermart/internal/models/handlers_models"
-	workwithapimodels "gofermart/internal/models/work_with_api_models"
+	handlers_models "gofermart/internal/models/handlers_models"
+	work_with_api_models "gofermart/internal/models/work_with_api_models"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -38,7 +38,7 @@ func (m *MockStorageMock) EXPECT() *MockStorageMockMockRecorder {
 }
 
 // AddNewOrder mocks base method.
-func (m *MockStorageMock) AddNewOrder(reqOrder *handlersmodels.ReqOrder) error {
+func (m *MockStorageMock) AddNewOrder(reqOrder *handlers_models.ReqOrder) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewOrder", reqOrder)
 	ret0, _ := ret[0].(error)
@@ -52,7 +52,7 @@ func (mr *MockStorageMockMockRecorder) AddNewOrder(reqOrder interface{}) *gomock
 }
 
 // AddNewUser mocks base method.
-func (m *MockStorageMock) AddNewUser(reqChanelRegister *handlersmodels.RequestRegister) (int, error) {
+func (m *MockStorageMock) AddNewUser(reqChanelRegister *handlers_models.RequestRegister) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewUser", reqChanelRegister)
 	ret0, _ := ret[0].(int)
@@ -81,10 +81,10 @@ func (mr *MockStorageMockMockRecorder) CheckOrderNumber(ctx, orderNumber interfa
 }
 
 // CheckUserLoginData mocks base method.
-func (m *MockStorageMock) CheckUserLoginData(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error) {
+func (m *MockStorageMock) CheckUserLoginData(reqLogin *handlers_models.RequestLogin) (*handlers_models.ResultLogin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckUserLoginData", reqLogin)
-	ret0, _ := ret[0].(*handlersmodels.ResultLogin)
+	ret0, _ := ret[0].(*handlers_models.ResultLogin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -122,10 +122,10 @@ func (mr *MockStorageMockMockRecorder) DeleteOrders(tx interface{}) *gomock.Call
 }
 
 // GetAllHistoryBalance mocks base method.
-func (m *MockStorageMock) GetAllHistoryBalance(userID int) ([]handlersmodels.RespWithdrawalsHistory, error) {
+func (m *MockStorageMock) GetAllHistoryBalance(userID int) ([]handlers_models.RespWithdrawalsHistory, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllHistoryBalance", userID)
-	ret0, _ := ret[0].([]handlersmodels.RespWithdrawalsHistory)
+	ret0, _ := ret[0].([]handlers_models.RespWithdrawalsHistory)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -152,10 +152,10 @@ func (mr *MockStorageMockMockRecorder) GetAllUnAccrualOrders() *gomock.Call {
 }
 
 // GetAllUserOrders mocks base method.
-func (m *MockStorageMock) GetAllUserOrders(userID int) ([]handlersmodels.RespGetOrders, error) {
+func (m *MockStorageMock) GetAllUserOrders(userID int) ([]handlers_models.RespGetOrders, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUserOrders", userID)
-	ret0, _ := ret[0].([]handlersmodels.RespGetOrders)
+	ret0, _ := ret[0].([]handlers_models.RespGetOrders)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -167,10 +167,10 @@ func (mr *MockStorageMockMockRecorder) GetAllUserOrders(userID interface{}) *gom
 }
 
 // GetCalculatedUsers mocks base method.
-func (m *MockStorageMock) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, error) {
+func (m *MockStorageMock) GetCalculatedUsers() ([]work_with_api_models.UsersOrdersAccrual, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCalculatedUsers")
-	ret0, _ := ret[0].([]workwithapimodels.UsersOrdersAccrual)
+	ret0, _ := ret[0].([]work_with_api_models.UsersOrdersAccrual)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -182,10 +182,10 @@ func (mr *MockStorageMockMockRecorder) GetCalculatedUsers() *gomock.Call {
 }
 
 // GetUserBalance mocks base method.
-func (m *MockStorageMock) GetUserBalance(ctx context.Context) (*handlersmodels.RespUserBalance, error) {
+func (m *MockStorageMock) GetUserBalance(ctx context.Context) (*handlers_models.RespUserBalance, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserBalance", ctx)
-	ret0, _ := ret[0].(*handlersmodels.RespUserBalance)
+	ret0, _ := ret[0].(*handlers_models.RespUserBalance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -197,7 +197,7 @@ func (mr *MockStorageMockMockRecorder) GetUserBalance(ctx interface{}) *gomock.C
 }
 
 // UpdateBalance mocks base method.
-func (m *MockStorageMock) UpdateBalance(usersOrdersAccrualList []workwithapimodels.UsersOrdersAccrual) error {
+func (m *MockStorageMock) UpdateBalance(usersOrdersAccrualList []work_with_api_models.UsersOrdersAccrual) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateBalance", usersOrdersAccrualList)
 	ret0, _ := ret[0].(error)
@@ -225,7 +225,7 @@ func (mr *MockStorageMockMockRecorder) UpdateOrderStatus(orderNumber interface{}
 }
 
 // UpdateOrdersStatusAndAccrual mocks base method.
-func (m *MockStorageMock) UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *workwithapimodels.ResGetOrderAccrual) error {
+func (m *MockStorageMock) UpdateOrdersStatusAndAccrual(resGetOrdersAccrual *work_with_api_models.ResGetOrderAccrual) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateOrdersStatusAndAccrual", resGetOrdersAccrual)
 	ret0, _ := ret[0].(error)
@@ -239,7 +239,7 @@ func (mr *MockStorageMockMockRecorder) UpdateOrdersStatusAndAccrual(resGetOrders
 }
 
 // WithdrawBalance mocks base method.
-func (m *MockStorageMock) WithdrawBalance(reqWithdraw handlersmodels.ReqWithdraw) error {
+func (m *MockStorageMock) WithdrawBalance(reqWithdraw handlers_models.ReqWithdraw) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithdrawBalance", reqWithdraw)
 	ret0, _ := ret[0].(error)

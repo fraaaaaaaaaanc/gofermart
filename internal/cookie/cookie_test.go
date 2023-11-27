@@ -2,6 +2,7 @@ package cookie
 
 import (
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/logger"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -10,6 +11,7 @@ import (
 
 func TestMiddlewareCheckCookie(t *testing.T) {
 	// Mock handler for testing
+	_ = logger.NewZapLogger("", "local")
 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
 	secretKey := os.Getenv("SECRET_KEY_FOR_COOKIE_TOKEN")

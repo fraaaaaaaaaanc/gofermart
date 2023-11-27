@@ -70,7 +70,6 @@ func MiddlewareCheckCookie(secretKeyJWTToken string) func(h http.Handler) http.H
 				logger.Error("the r.cookie_models(\"Authorization\") parameter is missing", zap.Error(err))
 				return
 			}
-			fmt.Println(tokenString)
 			userID, err := getUserIDCookie(tokenString.Value, secretKeyJWTToken)
 			if err != nil {
 				fmt.Println(err)

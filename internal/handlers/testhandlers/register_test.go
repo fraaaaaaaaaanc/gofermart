@@ -16,7 +16,7 @@ func TestRegister(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorage(ctrl)
+	mockStorage := mock.NewMockStorageMock(ctrl)
 	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
 
 	gomock.InOrder(
