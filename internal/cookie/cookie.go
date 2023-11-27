@@ -2,10 +2,12 @@ package cookie
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
-	"gofermart/internal/models/cookie"
+	"gofermart/internal/logger"
+	"gofermart/internal/models/cookie_models"
 	"net/http"
 	"time"
 )
@@ -59,19 +61,20 @@ func getUserIDCookie(tokenString, secretKeyJWTToken string) (int, error) {
 	return claims.UserID, nil
 }
 
-func MiddlewareCheckCookie(log *zap.Logger, secretKeyJWTToken string) func(h http.Handler) http.Handler {
+func MiddlewareCheckCookie(secretKeyJWTToken string) func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			tokenString, err := r.Cookie("Authorization")
 			if err != nil {
-				http.Error(w, "there is no authorization cookie", http.StatusUnauthorized)
-				log.Error("the r.cookie(\"Authorization\") parameter is missing", zap.Error(err))
+				http.Error(w, "there is no authorization cookie_models", http.StatusUnauthorized)
+				logger.Error("the r.cookie_models(\"Authorization\") parameter is missing", zap.Error(err))
 				return
 			}
 			userID, err := getUserIDCookie(tokenString.Value, secretKeyJWTToken)
 			if err != nil {
+				fmt.Println(err)
 				http.Error(w, "error working with the authorization token", http.StatusUnauthorized)
-				log.Error("an error occurred while working with the authorization token", zap.Error(err))
+				logger.Error("an error occurred while working with the authorization token", zap.Error(err))
 				return
 			}
 			ctx := context.WithValue(r.Context(), cookiemodels.UserID, userID)

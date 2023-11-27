@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"gofermart/internal/models/utilsmodels"
+	"gofermart/internal/models/utils_models"
 	"strconv"
 )
 

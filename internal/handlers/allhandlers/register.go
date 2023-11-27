@@ -5,7 +5,8 @@ import (
 	"errors"
 	"go.uber.org/zap"
 	"gofermart/internal/cookie"
-	"gofermart/internal/models/handlersmodels"
+	"gofermart/internal/logger"
+	"gofermart/internal/models/handlers_models"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -15,16 +16,17 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqRegister); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		h.log.Error(
-			"invalid request format, error when transferring data to the structure handlersmodels.RequestRegister",
+		logger.Error(
+			"invalid request format, error when transferring data to the structure handlers_models.RequestRegister",
 			zap.Error(err))
 		return
 	}
 
 	if err := h.validator.Struct(reqRegister); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		h.log.Error(
-			"invalid request format, not all fields of the structure were filled in models.RequestRegister",
+		logger.Error(
+			"invalid request format, not all fields of the structure were filled in "+
+				"handlers_models.RequestRegister",
 			zap.Error(err))
 		return
 	}
@@ -32,7 +34,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(reqRegister.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-		h.log.Error("internal server error when hashing the password", zap.Error(err))
+		logger.Error("internal server error when hashing the password", zap.Error(err))
 		return
 	}
 
@@ -42,20 +44,20 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil && !errors.Is(err, handlersmodels.ErrConflictLoginRegister) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-		h.log.Error("error when adding the user's username and password to the database", zap.Error(err))
+		logger.Error("error when adding the user's username and password to the database", zap.Error(err))
 		return
 	}
 
 	if errors.Is(err, handlersmodels.ErrConflictLoginRegister) {
 		http.Error(w, "login uniqueness error", http.StatusConflict)
-		h.log.Error("the login sent by the user already exists in the database", zap.Error(err))
+		logger.Error("the login sent by the user already exists in the database", zap.Error(err))
 		return
 	}
 
 	newCookie, err := cookie.NewCookie(userID, h.secretKeyJWTToken)
 	if err != nil {
-		http.Error(w, "cookie creation error", http.StatusInternalServerError)
-		h.log.Error("an error occurred when creating a new cookie", zap.Error(err))
+		http.Error(w, "cookie_models creation error", http.StatusInternalServerError)
+		logger.Error("an error occurred when creating a new cookie_models", zap.Error(err))
 		return
 	}
 

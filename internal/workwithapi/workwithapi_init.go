@@ -1,21 +1,18 @@
 package workwithapi
 
 import (
-	"go.uber.org/zap"
 	"gofermart/internal/storage"
 )
 
 type WorkAPI struct {
 	accrualSystemAddress string
-	log                  *zap.Logger
-	strg                 *storage.Storage
+	strg                 storage.StorageMock
 }
 
-func NewWorkAPI(log *zap.Logger, strg *storage.Storage, accrualSystemAddress string) *WorkAPI {
+func NewWorkAPI(storage storage.StorageMock, accrualSystemAddress string) *WorkAPI {
 	workAPI := &WorkAPI{
 		accrualSystemAddress: accrualSystemAddress,
-		log:                  log,
-		strg:                 strg,
+		strg:                 storage,
 	}
 
 	go workAPI.getOrdersAccrual()
