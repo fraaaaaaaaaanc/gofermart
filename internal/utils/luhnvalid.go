@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"gofermart/internal/models/utilsmodels"
+	"gofermart/internal/models/utils_models"
 	"strconv"
 )
 
@@ -9,13 +9,13 @@ func IsLuhnValid(orderNumber string) error {
 	sum := 0
 	lenOrderNumber := len(orderNumber) - 1
 	if lenOrderNumber < 0 {
-		return utilsmodels.ErrIsNilOrderNumber
+		return utils_models.ErrIsNilOrderNumber
 	}
 
 	for i := lenOrderNumber; i >= 0; i-- {
 		digit, err := strconv.Atoi(string(orderNumber[i]))
 		if err != nil {
-			return utilsmodels.ErrIsNotNumber
+			return utils_models.ErrIsNotNumber
 		}
 
 		if (lenOrderNumber-i)%2 != 0 {
@@ -28,7 +28,7 @@ func IsLuhnValid(orderNumber string) error {
 		sum += digit
 	}
 	if sum%10 != 0 {
-		return utilsmodels.ErrIsNotLuhnValid
+		return utils_models.ErrIsNotLuhnValid
 	}
 	return nil
 }

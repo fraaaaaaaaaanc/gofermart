@@ -8,42 +8,38 @@ import (
 	"gofermart/internal/logger"
 	"gofermart/internal/router"
 	"gofermart/internal/storage"
+	"gofermart/internal/storage/storage_db"
 	"gofermart/internal/workwithapi"
 	"net/http"
 )
 
 type app struct {
 	flagsConf *config.Flags
-	logZap    *logger.ZapLogger
 	hndlrs    allhandlers.Handlers
 	router    chi.Router
-	strgs     *storage.Storage
+	strgs     storage.StorageMock
 	workAPI   *workwithapi.WorkAPI
 }
 
 func NewApp() (*app, error) {
 	flags := config.ParseConfFlags()
-	log, err := logger.NewZapLogger(flags.LogFilePath, flags.ProjLvl)
+	err := logger.NewZapLogger(flags.LogFilePath, flags.ProjLvl)
 	if err != nil {
-		log.Error("Error", zap.Error(err))
 		panic(err)
 	}
-	strg, err := storage.NewStorage(flags.DataBaseURI, log.Log)
+	strg, err := storage_db.NewStorage(flags.DataBaseURI)
 	if err != nil {
-		log.Error("Error", zap.Error(err))
 		panic(err)
 	}
-	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
-	workAPI := workwithapi.NewWorkAPI(log.Log, strg, flags.AccrualSystemAddress)
-	rtr, err := router.NewRouter(hndlr, log.Log, flags.SecretKeyJWTToken)
+	hndlr := allhandlers.NewHandlers(strg, flags.SecretKeyJWTToken)
+	workAPI := workwithapi.NewWorkAPI(strg, flags.AccrualSystemAddress)
+	rtr, err := router.NewRouter(hndlr, flags.SecretKeyJWTToken)
 	if err != nil {
-		log.Error("Error", zap.Error(err))
 		panic(err)
 	}
 
 	appObj := &app{
 		flagsConf: flags,
-		logZap:    log,
 		hndlrs:    hndlr,
 		router:    rtr,
 		strgs:     strg,
@@ -55,9 +51,10 @@ func NewApp() (*app, error) {
 
 func Run() error {
 	app, _ := NewApp()
-	defer app.logZap.CloseFile()
-	app.logZap.Log.Info("Server start", zap.String("Running server on", app.flagsConf.String()))
+	defer logger.CloseFile()
+	defer app.strgs.CloseDB()
+	logger.Info("Server start", zap.String("Running server on", app.flagsConf.String()))
 	err := http.ListenAndServe(app.flagsConf.String(), app.router)
-	app.logZap.Log.Error("Error run server", zap.Error(err))
+	logger.Error("Error run server", zap.Error(err))
 	return err
 }

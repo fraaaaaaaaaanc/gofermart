@@ -5,26 +5,27 @@ import (
 	"errors"
 	"go.uber.org/zap"
 	"gofermart/internal/cookie"
-	"gofermart/internal/models/handlersmodels"
+	"gofermart/internal/logger"
+	"gofermart/internal/models/handlers_models"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
 func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
-	var reqLogin *handlersmodels.RequestLogin
+	var reqLogin *handlers_models.RequestLogin
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqLogin); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		h.log.Error(
-			"invalid request format, error when transferring data to the structure models.RequestLogin",
+		logger.Error(
+			"invalid request format, error when transferring data to the structure handlers_models.RequestLogin",
 			zap.Error(err))
 		return
 	}
 
 	if err := h.validator.Struct(reqLogin); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		h.log.Error(
-			"invalid request format, not all fields of the structure were filled in models.Login",
+		logger.Error(
+			"invalid request format, not all fields of the structure were filled in handlers_models.RequestLogin",
 			zap.Error(err))
 		return
 	}
@@ -32,28 +33,28 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 	reqLogin.Ctx = r.Context()
 	resLogin, err := h.strg.CheckUserLoginData(reqLogin)
 
-	if err != nil && !errors.Is(err, handlersmodels.ErrMissingDataInTable) {
+	if err != nil && !errors.Is(err, handlers_models.ErrMissingDataInTable) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-		h.log.Error("error when searching for data in the table", zap.Error(err))
+		logger.Error("error when searching for data in the table", zap.Error(err))
 		return
 	}
 
-	if errors.Is(err, handlersmodels.ErrMissingDataInTable) {
+	if errors.Is(err, handlers_models.ErrMissingDataInTable) {
 		http.Error(w, "authentication error: login not found", http.StatusUnauthorized)
-		h.log.Error("invalid login/password pair", zap.Error(handlersmodels.ErrMissingDataInTable))
+		logger.Error("invalid login/password pair", zap.Error(handlers_models.ErrMissingDataInTable))
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(resLogin.Password), []byte(reqLogin.Password)); err != nil {
 		http.Error(w, "authentication error: invalid password", http.StatusUnauthorized)
-		h.log.Error("invalid login/password pair", zap.Error(err))
+		logger.Error("invalid login/password pair", zap.Error(err))
 		return
 	}
 
 	newCookie, err := cookie.NewCookie(resLogin.UserID, h.secretKeyJWTToken)
 	if err != nil {
-		http.Error(w, "cookie creation error", http.StatusInternalServerError)
-		h.log.Error("an error occurred when creating a new cookie", zap.Error(err))
+		http.Error(w, "cookie_models creation error", http.StatusInternalServerError)
+		logger.Error("an error occurred when creating a new cookie_models", zap.Error(err))
 		return
 	}
 

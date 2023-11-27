@@ -3,6 +3,7 @@ package compress
 import (
 	"compress/gzip"
 	"go.uber.org/zap"
+	"gofermart/internal/logger"
 	"io"
 	"net/http"
 )
@@ -65,7 +66,7 @@ func (cr *compressReader) Close() error {
 	return cr.rz.Close()
 }
 
-func MiddlewareCompress(log *zap.Logger) func(h http.Handler) http.Handler {
+func MiddlewareCompress() func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var cw *compressWriter
@@ -82,7 +83,7 @@ func MiddlewareCompress(log *zap.Logger) func(h http.Handler) http.Handler {
 					if cw != nil {
 						if err := cw.Close(); err != nil {
 							w.WriteHeader(http.StatusInternalServerError)
-							log.Error("Error", zap.Error(err))
+							logger.Error("Error", zap.Error(err))
 							return
 						}
 					}
@@ -95,7 +96,7 @@ func MiddlewareCompress(log *zap.Logger) func(h http.Handler) http.Handler {
 					cr, err := newCompressReader(r.Body)
 					if err != nil {
 						w.WriteHeader(http.StatusInternalServerError)
-						log.Error("Error:", zap.Error(err))
+						logger.Error("Error:", zap.Error(err))
 						return
 					}
 					r.Body = cr
@@ -105,7 +106,7 @@ func MiddlewareCompress(log *zap.Logger) func(h http.Handler) http.Handler {
 				if cr != nil {
 					if err := cr.Close(); err != nil {
 						w.WriteHeader(http.StatusInternalServerError)
-						log.Error("Error:", zap.Error(err))
+						logger.Error("Error:", zap.Error(err))
 						return
 					}
 				}

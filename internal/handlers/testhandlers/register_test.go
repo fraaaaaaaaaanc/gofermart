@@ -1,11 +1,11 @@
 package testhandlers
 
 import (
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"gofermart/internal/config"
 	"gofermart/internal/handlers/allhandlers"
-	"gofermart/internal/logger"
-	"gofermart/internal/storage"
+	"gofermart/internal/models/handlers_models"
+	"gofermart/internal/storage/mock"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,11 +13,16 @@ import (
 )
 
 func TestRegister(t *testing.T) {
-	flags := config.ParseFlags()
-	log, _ := logger.NewZapLogger("", "local")
-	strg, _ := storage.NewStorage("host=localhost password=1234 dbname=gofermart user=postgres "+
-		"sslmode=disable", log.Log)
-	hndlr := allhandlers.NewHandlers(log.Log, strg, flags.SecretKeyJWTToken)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStorage := mock.NewMockStorageMock(ctrl)
+	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
+
+	gomock.InOrder(
+		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(1, nil),
+		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(0, handlers_models.ErrConflictLoginRegister),
+	)
 
 	method := http.MethodPost
 	url := "http://localhost:8080/api/user/register"
@@ -60,8 +65,8 @@ func TestRegister(t *testing.T) {
 		},
 		{
 			name: "POST request was sent to \"http://localhost:8080/api/user/register\" with a request body in which " +
-				"the parameter does not match the models structure type models.RequestRegister, should return " +
-				"the Status Code 400",
+				"the parameter does not match the models structure type handlers_models.RequestRegister, should " +
+				"return the Status Code 400",
 			req: req{
 				body:        `{"login": 123, "password": "123"}`,
 				contentType: "application/json",
@@ -87,7 +92,7 @@ func TestRegister(t *testing.T) {
 			name: "POST request was sent to \"http://localhost:8080/api/user/register\" with the correct request " +
 				"body should return the Status Code 200",
 			req: req{
-				body:        `{"login": "123", "password": "123"}`,
+				body:        `{"login": "test", "password": "123"}`,
 				contentType: "application/json",
 			},
 			resp: resp{
@@ -104,7 +109,7 @@ func TestRegister(t *testing.T) {
 			},
 			resp: resp{
 				statusCode: http.StatusConflict,
-				cookie:     &http.Cookie{},
+				cookie:     nil,
 			},
 		},
 	}
@@ -113,7 +118,7 @@ func TestRegister(t *testing.T) {
 			request := httptest.NewRequest(method, url, strings.NewReader(test.body))
 			request.Header.Set("Content-Type", test.contentType)
 			w := httptest.NewRecorder()
-			hndlr.Register(w, request)
+			hndlrs.Register(w, request)
 			resp := w.Result()
 			defer resp.Body.Close()
 
@@ -121,7 +126,6 @@ func TestRegister(t *testing.T) {
 			if test.cookie != nil {
 				assert.NotNil(t, resp.Cookies())
 			}
-
 		})
 	}
 }

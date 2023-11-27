@@ -12,12 +12,14 @@ const (
 	envProd  = "prod"
 )
 
-type ZapLogger struct {
+type Logger struct {
 	Log  *zap.Logger
 	File *os.File
 }
 
-func NewZapLogger(filePath, logLvl string) (*ZapLogger, error) {
+var l Logger
+
+func NewZapLogger(filePath, logLvl string) error {
 	var core zapcore.Core
 	var file *os.File
 
@@ -31,7 +33,7 @@ func NewZapLogger(filePath, logLvl string) (*ZapLogger, error) {
 	case envDev:
 		file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		writeSyncer := zapcore.AddSync(file)
 		fileConfig := zap.NewProductionConfig()
@@ -40,24 +42,25 @@ func NewZapLogger(filePath, logLvl string) (*ZapLogger, error) {
 			writeSyncer,
 			zapcore.InfoLevel)
 	}
-	logger := zap.New(core, zap.AddCaller())
-	return &ZapLogger{File: file, Log: logger}, nil
+	log := zap.New(core, zap.AddCaller())
+	l = Logger{File: file, Log: log}
+	return nil
 }
 
-func (z *ZapLogger) CloseFile() {
-	if z.File != nil {
-		if err := z.File.Close(); err != nil {
-			z.Error("Failed to close log file", zap.Error(err))
+func CloseFile() {
+	if l.File != nil {
+		if err := l.File.Close(); err != nil {
+			l.Log.Error("Failed to close log file", zap.Error(err))
 		}
 	}
 }
 
 // Info is a method to log informational messages.
-func (z *ZapLogger) Info(msg string, fields ...zapcore.Field) {
-	z.Log.Info(msg, fields...)
+func Info(msg string, fields ...zapcore.Field) {
+	l.Log.Info(msg, fields...)
 }
 
 // Error is a method to log error messages.
-func (z *ZapLogger) Error(msg string, fields ...zapcore.Field) {
-	z.Log.Error(msg, fields...)
+func Error(msg string, fields ...zapcore.Field) {
+	l.Log.Error(msg, fields...)
 }
