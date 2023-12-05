@@ -11,20 +11,21 @@ import (
 
 func TestMiddlewareCheckCookie(t *testing.T) {
 	// Mock handler for testing
-	_ = logger.NewZapLogger("", "local")
-	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
 	secretKey := os.Getenv("SECRET_KEY_FOR_COOKIE_TOKEN")
-	// Secret key for JWT token
-	cookie, _ := NewCookie(1, secretKey)
+	cookies := NewCookie(secretKey)
+	userCookie, _ := cookies.NewUserCookie(1)
+
+	_ = logger.NewZapLogger("", "local")
+	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
 	// Test case 1: Valid Authorization cookie_models
 	t.Run("ValidAuthorizationCookie", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
-		req.AddCookie(&http.Cookie{Name: "Authorization", Value: cookie.Value})
+		req.AddCookie(&http.Cookie{Name: "Authorization", Value: userCookie.Value})
 		recorder := httptest.NewRecorder()
 
-		handler := MiddlewareCheckCookie(secretKey)(mockHandler)
+		handler := cookies.MiddlewareCheckCookie()(mockHandler)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, http.StatusOK, recorder.Code)
@@ -35,7 +36,7 @@ func TestMiddlewareCheckCookie(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
 		recorder := httptest.NewRecorder()
 
-		handler := MiddlewareCheckCookie(secretKey)(mockHandler)
+		handler := cookies.MiddlewareCheckCookie()(mockHandler)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, http.StatusUnauthorized, recorder.Code)
@@ -48,7 +49,7 @@ func TestMiddlewareCheckCookie(t *testing.T) {
 		req.AddCookie(&http.Cookie{Name: "Authorization", Value: "invalid_token"})
 		recorder := httptest.NewRecorder()
 
-		handler := MiddlewareCheckCookie(secretKey)(mockHandler)
+		handler := cookies.MiddlewareCheckCookie()(mockHandler)
 		handler.ServeHTTP(recorder, req)
 
 		assert.Equal(t, http.StatusUnauthorized, recorder.Code)

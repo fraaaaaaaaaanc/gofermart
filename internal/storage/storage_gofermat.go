@@ -6,6 +6,8 @@ import (
 	"gofermart/internal/models/handlers_models"
 )
 
+//go:generate mockgen -source=storage_gofermat.go -destination=mock/mock.go -package=mock
+
 type StorageGofermart interface {
 	AddHistoryBalance(ctx context.Context, tx *sql.Tx, reqWithdraw handlersmodels.ReqWithdraw) error
 	AddNewOrder(ctx context.Context, tx *sql.Tx, reqOrder *handlersmodels.ReqOrder) (*handlersmodels.ReqOrder, error)
