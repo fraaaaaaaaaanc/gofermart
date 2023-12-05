@@ -2,19 +2,26 @@ package workwithapi
 
 import (
 	"gofermart/internal/storage"
+	"time"
 )
+
+// FrequencyRequest constant response time of the request to the external API
+const FrequencyRequest = time.Second * 5
 
 type WorkAPI struct {
 	accrualSystemAddress string
-	strg                 storage.StorageMock
+	ticker               *time.Ticker
+	storage.StorageAPI
 }
 
-func NewWorkAPI(storage storage.StorageMock, accrualSystemAddress string) *WorkAPI {
+func NewWorkAPI(storage storage.StorageAPI, accrualSystemAddress string) *WorkAPI {
+	ticker := time.NewTicker(FrequencyRequest)
 	workAPI := &WorkAPI{
 		accrualSystemAddress: accrualSystemAddress,
-		strg:                 storage,
+		ticker:               ticker,
+		StorageAPI:           storage,
 	}
 
-	go workAPI.getOrdersAccrual()
+	go workAPI.calculationOrdersAccrual()
 	return workAPI
 }

@@ -4,11 +4,12 @@ import (
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
 	"gofermart/internal/config"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
 	"gofermart/internal/router"
 	"gofermart/internal/storage"
-	"gofermart/internal/storage/storage_db"
+	"gofermart/internal/storage/storage_gofermart"
 	"gofermart/internal/workwithapi"
 	"net/http"
 )
@@ -17,25 +18,33 @@ type app struct {
 	flagsConf *config.Flags
 	hndlrs    allhandlers.Handlers
 	router    chi.Router
-	strgs     storage.StorageMock
+	strgs     storage.StorageGofermart
 	workAPI   *workwithapi.WorkAPI
+	cookie    cookie.Cookie
 }
 
 func NewApp() (*app, error) {
 	flags := config.ParseConfFlags()
+
 	err := logger.NewZapLogger(flags.LogFilePath, flags.ProjLvl)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	strg, err := storagedb.NewStorage(flags.DataBaseURI)
+
+	strg, err := storagegofermart.NewStorage(flags.DataBaseURI)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	hndlr := allhandlers.NewHandlers(strg, flags.SecretKeyJWTToken)
+
+	cookies := cookie.NewCookie(flags.SecretKeyJWTToken)
+
+	hndlr := allhandlers.NewHandlers(strg, cookies)
+
 	workAPI := workwithapi.NewWorkAPI(strg, flags.AccrualSystemAddress)
-	rtr, err := router.NewRouter(hndlr, flags.SecretKeyJWTToken)
+
+	rtr, err := router.NewRouter(hndlr, cookies)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	appObj := &app{
@@ -44,6 +53,7 @@ func NewApp() (*app, error) {
 		router:    rtr,
 		strgs:     strg,
 		workAPI:   workAPI,
+		cookie:    cookies,
 	}
 
 	return appObj, nil

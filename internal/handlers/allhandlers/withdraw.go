@@ -1,77 +1,74 @@
 package allhandlers
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
-	"go.uber.org/zap"
 	"gofermart/internal/logger"
+	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
 	"gofermart/internal/utils"
 	"net/http"
 )
 
 func (h *Handlers) WithDraw(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(cookiemodels.UserID).(int)
+
 	var reqWithdraw handlersmodels.ReqWithdraw
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqWithdraw); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		logger.Error(
-			"invalid request format, error when transferring data to the structure handlers_models.ReqWithdraw",
-			zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
 
 	if err := h.validator.Struct(reqWithdraw); err != nil {
 		http.Error(w, "invalid request format", http.StatusBadRequest)
-		logger.Error(
-			"invalid request format, not all fields of the structure were filled in handlers_models.ReqWithdraw",
-			zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
 
 	if err := utils.IsLuhnValid(reqWithdraw.OrderNumber); err != nil {
 		http.Error(w, "the number ordered did not pass verification", http.StatusUnprocessableEntity)
-		logger.Error("invalid order number format", zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
 
-	err := h.strg.CheckOrderNumber(r.Context(), reqWithdraw.OrderNumber)
-	if err != nil && !errors.Is(err, handlersmodels.ErrDuplicateOrderNumber) {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		logger.Error("error when working with the database", zap.Error(err))
-		return
-	}
+	reqWithdraw.UserID = userID
+	err := h.strg.InTransaction(r.Context(), func(ctx context.Context, tx *sql.Tx) error {
+		if err := h.strg.CheckOrderNumber(ctx, tx, reqWithdraw.OrderNumber); err != nil {
+			return err
+		}
+		if err := h.strg.WithdrawBalance(ctx, tx, reqWithdraw); err != nil {
+			return err
+		}
 
-	if errors.Is(err, handlersmodels.ErrDuplicateOrderNumber) {
-		http.Error(w, "this order number already exists", http.StatusUnprocessableEntity)
-		logger.Error("the order number sent by the user is already in the orders table", zap.Error(err))
-		return
-	}
+		return h.strg.AddHistoryBalance(ctx, tx, reqWithdraw)
+	})
 
-	reqWithdraw.Ctx = r.Context()
-	err = h.strg.WithdrawBalance(reqWithdraw)
-	if err != nil &&
-		!errors.Is(err, handlersmodels.ErrNegativeBalanceValue) &&
-		!errors.Is(err, handlersmodels.ErrDuplicateOrderNumberHistoryBalance) {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		logger.Error("error when working with the database", zap.Error(err))
-		return
-	}
-
-	if errors.Is(err, handlersmodels.ErrDuplicateOrderNumberHistoryBalance) {
-		http.Error(w, "funds have already been debited from the bonus account for this order number",
-			http.StatusUnprocessableEntity)
-		logger.Error("an error occurred when adding the order number to the history_balance table, "+
-			"this order already exists",
-			zap.Error(err))
-		return
-	}
-
-	if errors.Is(err, handlersmodels.ErrNegativeBalanceValue) {
-		http.Error(w, "there are not enough funds on the balance sheet to write off", http.StatusPaymentRequired)
-		logger.Error("error when debiting funds from the bonus account, insufficient funds", zap.Error(err))
-		return
+	if err != nil {
+		switch true {
+		case errors.Is(err, handlersmodels.ErrDuplicateOrderNumber):
+			http.Error(w, "this order number already exists", http.StatusUnprocessableEntity)
+			logger.With(userID, err, r)
+			return
+		case errors.Is(err, handlersmodels.ErrNegativeBalanceValue):
+			http.Error(w, "there are not enough funds on the balance sheet to write off", http.StatusPaymentRequired)
+			logger.With(userID, err, r)
+			return
+		case errors.Is(err, handlersmodels.ErrDuplicateOrderNumberHistoryBalance):
+			http.Error(w, "funds have already been debited from the bonus account for this order number",
+				http.StatusUnprocessableEntity)
+			logger.With(userID, err, r)
+			return
+		default:
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			logger.With(userID, err, r)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)
+	logger.With(userID, nil, r)
 }

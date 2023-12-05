@@ -2,7 +2,6 @@ package workwithapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"go.uber.org/zap"
 	"gofermart/internal/logger"
 	"gofermart/internal/models/work_with_api_models"
@@ -10,7 +9,7 @@ import (
 	"strconv"
 )
 
-func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*workwithapimodels.ResGetOrderAccrual, error) {
+func (w *WorkAPI) sendGetRequestAPI(ordersNumber []string) (*workwithapimodels.ResGetOrderAccrual, error) {
 	var respGetOrderAccrual workwithapimodels.ResGetOrderAccrual
 	for _, orderNumber := range ordersNumber {
 		resp := w.GetRequestOrderAccrual(orderNumber)
@@ -44,7 +43,6 @@ func (w *WorkAPI) getOrderAccrual(ordersNumber []string) (*workwithapimodels.Res
 				"\"http://localhost:8080/api/orders/{number}\"")
 		}
 	}
-	fmt.Println(&respGetOrderAccrual.RespGetRequestList)
 	if respGetOrderAccrual.RespGetRequestList == nil {
 		return nil, workwithapimodels.ErrNoRespAPI
 	}

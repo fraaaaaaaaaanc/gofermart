@@ -1,4 +1,4 @@
-package storagedb
+package storagegofermart
 
 import (
 	"go.uber.org/zap"

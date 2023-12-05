@@ -1,12 +1,13 @@
-package storagedb
+package storagegofermart
 
 import (
 	"context"
+	"database/sql"
 	handlersmodels "gofermart/internal/models/handlers_models"
 )
 
-func (s *Storage) CheckOrderNumber(ctx context.Context, orderNumber string) error {
-	row := s.db.QueryRowContext(ctx,
+func (s *Storage) CheckOrderNumber(ctx context.Context, tx *sql.Tx, orderNumber string) error {
+	row := tx.QueryRowContext(ctx,
 		"SELECT EXISTS (SELECT 1 FROM orders WHERE order_number = $1);",
 		orderNumber)
 	var exists bool

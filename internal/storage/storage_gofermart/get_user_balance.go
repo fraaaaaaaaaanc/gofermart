@@ -1,16 +1,15 @@
-package storagedb
+package storagegofermart
 
 import (
 	"context"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	handlersmodels "gofermart/internal/models/handlers_models"
-	"time"
 )
 
 func (s *Storage) GetUserBalance(ctx context.Context) (*handlersmodels.RespUserBalance, error) {
 	userID := ctx.Value(cookiemodels.UserID).(int)
 
-	newCtx, cansel := context.WithTimeout(ctx, time.Second*1)
+	newCtx, cansel := context.WithTimeout(ctx, durationWorkCtx)
 	defer cansel()
 
 	row := s.db.QueryRowContext(newCtx,

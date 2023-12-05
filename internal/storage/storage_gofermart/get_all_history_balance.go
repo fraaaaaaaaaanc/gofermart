@@ -1,12 +1,16 @@
-package storagedb
+package storagegofermart
 
 import (
+	"context"
 	"gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) GetAllHistoryBalance(userID int) ([]handlersmodels.RespWithdrawalsHistory, error) {
-	rows, err := s.db.Query("SELECT order_number_unregister, withdrawn_sum, withdrawn_datetime FROM history_balance "+
+func (s *Storage) GetAllHistoryBalance(ctxRequest context.Context, userID int) ([]handlersmodels.RespWithdrawalsHistory, error) {
+	ctx, cansel := context.WithTimeout(ctxRequest, durationWorkCtx)
+	defer cansel()
+
+	rows, err := s.db.QueryContext(ctx, "SELECT order_number_unregister, withdrawn_sum, withdrawn_datetime FROM history_balance "+
 		"WHERE user_id = $1 ORDER BY withdrawn_datetime ASC",
 		userID)
 	if err != nil {

@@ -14,7 +14,7 @@ import (
 
 const timeLiveToken = time.Hour * 6
 
-func BuildJwtString(userID int, secretKeyJWTToken string) (string, error) {
+func (c Cookie) buildJwtString(userID int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &cookiemodels.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(timeLiveToken)),
@@ -22,15 +22,15 @@ func BuildJwtString(userID int, secretKeyJWTToken string) (string, error) {
 		UserID: userID,
 	})
 
-	tokenString, err := token.SignedString([]byte(secretKeyJWTToken))
+	tokenString, err := token.SignedString([]byte(c.secretKeyJWTToken))
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
 }
 
-func NewCookie(userID int, secretKeyJWTToken string) (*http.Cookie, error) {
-	tokenString, err := BuildJwtString(userID, secretKeyJWTToken)
+func (c Cookie) NewUserCookie(userID int) (*http.Cookie, error) {
+	tokenString, err := c.buildJwtString(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +43,11 @@ func NewCookie(userID int, secretKeyJWTToken string) (*http.Cookie, error) {
 	}, nil
 }
 
-func getUserIDCookie(tokenString, secretKeyJWTToken string) (int, error) {
+func (c Cookie) getUserIDCookie(tokenString string) (int, error) {
 	valid := validator.New()
 	claims := &cookiemodels.Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKeyJWTToken), nil
+		return []byte(c.secretKeyJWTToken), nil
 	})
 	if err != nil {
 		return 0, err
@@ -61,7 +61,7 @@ func getUserIDCookie(tokenString, secretKeyJWTToken string) (int, error) {
 	return claims.UserID, nil
 }
 
-func MiddlewareCheckCookie(secretKeyJWTToken string) func(h http.Handler) http.Handler {
+func (c Cookie) MiddlewareCheckCookie() func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			tokenString, err := r.Cookie("Authorization")
@@ -70,7 +70,7 @@ func MiddlewareCheckCookie(secretKeyJWTToken string) func(h http.Handler) http.H
 				logger.Error("the r.cookie_models(\"Authorization\") parameter is missing", zap.Error(err))
 				return
 			}
-			userID, err := getUserIDCookie(tokenString.Value, secretKeyJWTToken)
+			userID, err := c.getUserIDCookie(tokenString.Value)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, "error working with the authorization token", http.StatusUnauthorized)

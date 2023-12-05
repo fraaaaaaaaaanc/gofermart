@@ -1,21 +1,19 @@
 package handlersmodels
 
 import (
-	"context"
 	"errors"
 )
 
 var ErrConflictOrderNumberAnotherUser = errors.New("data conflict, the order number sent by the user already exists in " +
-	"the storage_db (added by another user)")
+	"the storage_gofermart (added by another user)")
 
 var ErrConflictOrderNumberSameUser = errors.New("data conflict, the order number sent by the user already exists in " +
-	"the storage_db (added by same user)")
+	"the storage_gofermart (added by same user)")
 
 type ReqOrder struct {
 	OrderNumber string
-	OrderStatus string
 	UserID      int
-	Ctx         context.Context
+	OrderID     int
 }
 
 //type ReqOrder struct {

@@ -3,6 +3,7 @@ package logger
 import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"net/http"
 	"os"
 )
 
@@ -63,4 +64,13 @@ func Info(msg string, fields ...zapcore.Field) {
 // Error is a method to log error messages.
 func Error(msg string, fields ...zapcore.Field) {
 	l.Log.Error(msg, fields...)
+}
+
+func With(userID int, err error, r *http.Request) {
+	l.Log.Info("Request details",
+		zap.Int("UserID", userID),
+		zap.String("uri", r.RequestURI),
+		zap.String("method", r.Method),
+		zap.Error(err),
+	)
 }

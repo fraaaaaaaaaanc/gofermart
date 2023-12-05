@@ -26,7 +26,7 @@ func TestMiddlewareCompress(t *testing.T) {
 		assert.NoError(t, err)
 
 		request := httptest.NewRequest(http.MethodPost, "/", buf)
-		assert.NoError(t, err)
+		//assert.NoError(t, err)
 		request.Header.Set("Content-Type", "application/json; charset=utf-8")
 		request.Header.Set("Content-Encoding", "gzip")
 		request.RequestURI = ""

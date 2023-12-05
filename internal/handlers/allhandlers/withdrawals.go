@@ -3,7 +3,6 @@ package allhandlers
 import (
 	"encoding/json"
 	"errors"
-	"go.uber.org/zap"
 	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
@@ -12,16 +11,17 @@ import (
 
 func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(cookiemodels.UserID).(int)
-	respWithdrawalsHistory, err := h.strg.GetAllHistoryBalance(userID)
+
+	respWithdrawalsHistory, err := h.strg.GetAllHistoryBalance(r.Context(), userID)
 	if err != nil && !errors.Is(err, handlersmodels.ErrTheAreNoWithdraw) {
 		http.Error(w, "bonus points have not been debited from this account before", http.StatusNoContent)
-		logger.Error("error forming the response", zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
 
 	if errors.Is(err, handlersmodels.ErrTheAreNoWithdraw) {
 		http.Error(w, "bonus points have not been debited from this account before", http.StatusNoContent)
-		logger.Error("error forming the response", zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
 
@@ -30,7 +30,8 @@ func (h *Handlers) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w)
 	if err = enc.Encode(respWithdrawalsHistory); err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-		logger.Error("error forming the response", zap.Error(err))
+		logger.With(userID, err, r)
 		return
 	}
+	logger.With(userID, nil, r)
 }

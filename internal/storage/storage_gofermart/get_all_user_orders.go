@@ -1,13 +1,16 @@
-package storagedb
+package storagegofermart
 
 import (
+	"context"
 	handlersmodels "gofermart/internal/models/handlers_models"
 	"time"
 )
 
-func (s *Storage) GetAllUserOrders(userID int) ([]handlersmodels.RespGetOrders, error) {
+func (s *Storage) GetAllUserOrders(ctxRequest context.Context, userID int) ([]handlersmodels.RespGetOrders, error) {
+	ctx, cansel := context.WithTimeout(ctxRequest, durationWorkCtx)
+	defer cansel()
 
-	rows, err := s.db.Query("SELECT order_number, order_status, accrual, order_datetime FROM orders"+
+	rows, err := s.db.QueryContext(ctx, "SELECT order_number, order_status, accrual, order_datetime FROM orders"+
 		" WHERE user_id = $1 ORDER BY order_datetime ASC",
 		userID)
 	if err != nil {

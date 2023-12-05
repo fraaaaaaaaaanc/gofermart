@@ -1,7 +1,6 @@
 package handlersmodels
 
 import (
-	"context"
 	"errors"
 	"github.com/shopspring/decimal"
 )
@@ -15,7 +14,7 @@ var ErrDuplicateOrderNumberHistoryBalance = errors.New("this order number is alr
 var ErrDuplicateOrderNumber = errors.New("this order number is already in the table orders")
 
 type ReqWithdraw struct {
+	UserID      int
 	OrderNumber string          `json:"order" validate:"required"`
 	SumWithdraw decimal.Decimal `json:"sum" validate:"required"`
-	Ctx         context.Context
 }

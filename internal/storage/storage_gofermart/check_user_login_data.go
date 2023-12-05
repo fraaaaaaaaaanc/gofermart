@@ -1,15 +1,14 @@
-package storagedb
+package storagegofermart
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	handlersmodels "gofermart/internal/models/handlers_models"
-	"time"
 )
 
 func (s *Storage) CheckUserLoginData(reqLogin *handlersmodels.RequestLogin) (*handlersmodels.ResultLogin, error) {
-	ctx, cansel := context.WithTimeout(reqLogin.Ctx, time.Second*1)
+	ctx, cansel := context.WithTimeout(reqLogin.Ctx, durationWorkCtx)
 	defer cansel()
 
 	row := s.db.QueryRowContext(ctx,

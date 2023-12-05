@@ -1,14 +1,17 @@
-package storagedb
+package storagegofermart
 
 import (
-	"gofermart/internal/models/orderstatuses"
+	"context"
 	workwithapimodels "gofermart/internal/models/work_with_api_models"
 )
 
 func (s *Storage) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, error) {
-	rows, err := s.db.Query("SELECT user_id, accrual FROM order_accrual "+
+	ctx, cansel := context.WithTimeout(context.Background(), durationWorkCtx)
+	defer cansel()
+
+	rows, err := s.db.QueryContext(ctx, "SELECT user_id, accrual FROM order_accrual "+
 		"WHERE order_status_accrual = $1",
-		orderstatuses.PROCESSED)
+		OrderStatusProcessed)
 	if err != nil {
 		return nil, err
 	}
