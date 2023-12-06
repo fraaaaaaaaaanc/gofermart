@@ -2,7 +2,6 @@ package storagegofermart
 
 import (
 	"context"
-	"gofermart/internal/models/orderstatuses"
 	workwithapimodels "gofermart/internal/models/work_with_api_models"
 )
 
@@ -12,7 +11,7 @@ func (s *Storage) GetAllUnAccrualOrders() ([]string, error) {
 
 	rows, err := s.db.QueryContext(ctx, "SELECT order_number FROM order_accrual "+
 		"WHERE order_status_accrual IN ($1, $2, $3)",
-		orderstatuses.NEW, orderstatuses.REGISTERED, orderstatuses.PROCESSING)
+		orderStatusNew, orderStatusRegistered, orderStatusProcessing)
 	if err != nil {
 		return nil, err
 	}

@@ -11,7 +11,7 @@ func (s *Storage) GetCalculatedUsers() ([]workwithapimodels.UsersOrdersAccrual, 
 
 	rows, err := s.db.QueryContext(ctx, "SELECT user_id, accrual FROM order_accrual "+
 		"WHERE order_status_accrual = $1",
-		OrderStatusProcessed)
+		orderStatusProcessed)
 	if err != nil {
 		return nil, err
 	}
