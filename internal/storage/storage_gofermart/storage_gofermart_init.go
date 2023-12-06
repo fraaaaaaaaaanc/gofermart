@@ -12,7 +12,7 @@ import (
 
 //const migrationsDir = "C:\\Users\\frant\\go\\go1.21.0\\bin\\pkg\\mod\\github.com\\fraaaaaaaaaanc\\gofermart\\internal\\migrations"
 
-const migrationsDir = "gofermart\\internal\\migrations"
+const migrationsDir = "internal\\migrations"
 
 type Storage struct {
 	db *sql.DB
