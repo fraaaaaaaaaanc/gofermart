@@ -3,6 +3,7 @@ package testhandlers
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/models/handlers_models"
 	"gofermart/internal/storage/mock"
@@ -16,12 +17,13 @@ func TestRegister(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorageMock(ctrl)
-	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
+	mockStorage := mock.NewMockStorageGofermart(ctrl)
+	cookies := cookie.NewCookie("test")
+	hndlr := allhandlers.NewHandlers(mockStorage, cookies)
 
 	gomock.InOrder(
-		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(1, nil),
-		mockStorage.EXPECT().AddNewUser(gomock.Any()).Return(0, handlersmodels.ErrConflictLoginRegister),
+		mockStorage.EXPECT().AddNewUserAndBalance(gomock.Any(), gomock.Any()).Return(1, nil),
+		mockStorage.EXPECT().AddNewUserAndBalance(gomock.Any(), gomock.Any()).Return(0, handlersmodels.ErrConflictLoginRegister),
 	)
 
 	method := http.MethodPost
@@ -92,7 +94,7 @@ func TestRegister(t *testing.T) {
 			name: "POST request was sent to \"http://localhost:8080/api/user/register\" with the correct request " +
 				"body should return the Status Code 200",
 			req: req{
-				body:        `{"login": "test", "password": "123"}`,
+				body:        `{"login": "123", "password": "123"}`,
 				contentType: "application/json",
 			},
 			resp: resp{
@@ -118,7 +120,7 @@ func TestRegister(t *testing.T) {
 			request := httptest.NewRequest(method, url, strings.NewReader(test.body))
 			request.Header.Set("Content-Type", test.contentType)
 			w := httptest.NewRecorder()
-			hndlrs.Register(w, request)
+			hndlr.Register(w, request)
 			resp := w.Result()
 			defer resp.Body.Close()
 

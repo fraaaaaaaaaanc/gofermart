@@ -36,90 +36,33 @@ func (m *MockStorageGofermart) EXPECT() *MockStorageGofermartMockRecorder {
 	return m.recorder
 }
 
-// AddHistoryBalance mocks base method.
-func (m *MockStorageGofermart) AddHistoryBalance(ctx context.Context, tx *sql.Tx, reqWithdraw handlersmodels.ReqWithdraw) error {
+// AddNewOrderAndAccrual mocks base method.
+func (m *MockStorageGofermart) AddNewOrderAndAccrual(ctxRequest context.Context, reqOrder *handlersmodels.ReqOrder) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddHistoryBalance", ctx, tx, reqWithdraw)
+	ret := m.ctrl.Call(m, "AddNewOrderAndAccrual", ctxRequest, reqOrder)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// AddHistoryBalance indicates an expected call of AddHistoryBalance.
-func (mr *MockStorageGofermartMockRecorder) AddHistoryBalance(ctx, tx, reqWithdraw interface{}) *gomock.Call {
+// AddNewOrderAndAccrual indicates an expected call of AddNewOrderAndAccrual.
+func (mr *MockStorageGofermartMockRecorder) AddNewOrderAndAccrual(ctxRequest, reqOrder interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddHistoryBalance", reflect.TypeOf((*MockStorageGofermart)(nil).AddHistoryBalance), ctx, tx, reqWithdraw)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewOrderAndAccrual", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewOrderAndAccrual), ctxRequest, reqOrder)
 }
 
-// AddNewOrder mocks base method.
-func (m *MockStorageGofermart) AddNewOrder(ctx context.Context, tx *sql.Tx, reqOrder *handlersmodels.ReqOrder) (*handlersmodels.ReqOrder, error) {
+// AddNewUserAndBalance mocks base method.
+func (m *MockStorageGofermart) AddNewUserAndBalance(ctxRequest context.Context, reqRegister handlersmodels.RequestRegister) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNewOrder", ctx, tx, reqOrder)
-	ret0, _ := ret[0].(*handlersmodels.ReqOrder)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// AddNewOrder indicates an expected call of AddNewOrder.
-func (mr *MockStorageGofermartMockRecorder) AddNewOrder(ctx, tx, reqOrder interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewOrder", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewOrder), ctx, tx, reqOrder)
-}
-
-// AddNewOrderAccrual mocks base method.
-func (m *MockStorageGofermart) AddNewOrderAccrual(ctx context.Context, tx *sql.Tx, reqOrder *handlersmodels.ReqOrder) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNewOrderAccrual", ctx, tx, reqOrder)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddNewOrderAccrual indicates an expected call of AddNewOrderAccrual.
-func (mr *MockStorageGofermartMockRecorder) AddNewOrderAccrual(ctx, tx, reqOrder interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewOrderAccrual", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewOrderAccrual), ctx, tx, reqOrder)
-}
-
-// AddNewUser mocks base method.
-func (m *MockStorageGofermart) AddNewUser(ctx context.Context, tx *sql.Tx, reqRegister *handlersmodels.RequestRegister) (int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNewUser", ctx, tx, reqRegister)
+	ret := m.ctrl.Call(m, "AddNewUserAndBalance", ctxRequest, reqRegister)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddNewUser indicates an expected call of AddNewUser.
-func (mr *MockStorageGofermartMockRecorder) AddNewUser(ctx, tx, reqRegister interface{}) *gomock.Call {
+// AddNewUserAndBalance indicates an expected call of AddNewUserAndBalance.
+func (mr *MockStorageGofermartMockRecorder) AddNewUserAndBalance(ctxRequest, reqRegister interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewUser", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewUser), ctx, tx, reqRegister)
-}
-
-// AddNewUserBalance mocks base method.
-func (m *MockStorageGofermart) AddNewUserBalance(ctx context.Context, tx *sql.Tx, userID int) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNewUserBalance", ctx, tx, userID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddNewUserBalance indicates an expected call of AddNewUserBalance.
-func (mr *MockStorageGofermartMockRecorder) AddNewUserBalance(ctx, tx, userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewUserBalance", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewUserBalance), ctx, tx, userID)
-}
-
-// CheckOrderNumber mocks base method.
-func (m *MockStorageGofermart) CheckOrderNumber(ctx context.Context, tx *sql.Tx, orderNumber string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckOrderNumber", ctx, tx, orderNumber)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CheckOrderNumber indicates an expected call of CheckOrderNumber.
-func (mr *MockStorageGofermartMockRecorder) CheckOrderNumber(ctx, tx, orderNumber interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckOrderNumber", reflect.TypeOf((*MockStorageGofermart)(nil).CheckOrderNumber), ctx, tx, orderNumber)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewUserAndBalance", reflect.TypeOf((*MockStorageGofermart)(nil).AddNewUserAndBalance), ctxRequest, reqRegister)
 }
 
 // CheckUserLoginData mocks base method.
@@ -208,16 +151,16 @@ func (mr *MockStorageGofermartMockRecorder) InTransaction(parentsCtx, f interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InTransaction", reflect.TypeOf((*MockStorageGofermart)(nil).InTransaction), parentsCtx, f)
 }
 
-// WithdrawBalance mocks base method.
-func (m *MockStorageGofermart) WithdrawBalance(ctx context.Context, tx *sql.Tx, reqWithdraw handlersmodels.ReqWithdraw) error {
+// ProcessingDebitingFunds mocks base method.
+func (m *MockStorageGofermart) ProcessingDebitingFunds(ctxRequest context.Context, reqWithdraw handlersmodels.ReqWithdraw) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WithdrawBalance", ctx, tx, reqWithdraw)
+	ret := m.ctrl.Call(m, "ProcessingDebitingFunds", ctxRequest, reqWithdraw)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// WithdrawBalance indicates an expected call of WithdrawBalance.
-func (mr *MockStorageGofermartMockRecorder) WithdrawBalance(ctx, tx, reqWithdraw interface{}) *gomock.Call {
+// ProcessingDebitingFunds indicates an expected call of ProcessingDebitingFunds.
+func (mr *MockStorageGofermartMockRecorder) ProcessingDebitingFunds(ctxRequest, reqWithdraw interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithdrawBalance", reflect.TypeOf((*MockStorageGofermart)(nil).WithdrawBalance), ctx, tx, reqWithdraw)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessingDebitingFunds", reflect.TypeOf((*MockStorageGofermart)(nil).ProcessingDebitingFunds), ctxRequest, reqWithdraw)
 }

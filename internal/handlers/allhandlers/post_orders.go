@@ -1,8 +1,6 @@
 package allhandlers
 
 import (
-	"context"
-	"database/sql"
 	"errors"
 	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
@@ -33,14 +31,7 @@ func (h *Handlers) PostOrders(w http.ResponseWriter, r *http.Request) {
 		OrderNumber: string(orderNumber),
 		UserID:      userID,
 	}
-	err = h.strg.InTransaction(r.Context(), func(ctx context.Context, tx *sql.Tx) error {
-		reqOrder, err := h.strg.AddNewOrder(ctx, tx, reqOrder)
-		if err != nil {
-			return err
-		}
-		err = h.strg.AddNewOrderAccrual(ctx, tx, reqOrder)
-		return err
-	})
+	err = h.strg.AddNewOrderAndAccrual(r.Context(), reqOrder)
 	if err != nil &&
 		!errors.Is(err, handlersmodels.ErrConflictOrderNumberAnotherUser) &&
 		!errors.Is(err, handlersmodels.ErrConflictOrderNumberSameUser) {

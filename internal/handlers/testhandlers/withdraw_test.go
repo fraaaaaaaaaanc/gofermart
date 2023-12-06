@@ -3,7 +3,9 @@ package testhandlers
 import (
 	"context"
 	"github.com/golang/mock/gomock"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
@@ -18,17 +20,35 @@ func TestWithDraw(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorageMock(ctrl)
-	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
+	mockStorage := mock.NewMockStorageGofermart(ctrl)
+	cookies := cookie.NewCookie("test")
+	hndlr := allhandlers.NewHandlers(mockStorage, cookies)
 
 	gomock.InOrder(
-		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(handlersmodels.ErrDuplicateOrderNumber),
-		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlersmodels.ErrNegativeBalanceValue),
-		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(handlersmodels.ErrDuplicateOrderNumberHistoryBalance),
-		mockStorage.EXPECT().CheckOrderNumber(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().WithdrawBalance(gomock.Any()).Return(nil),
+		mockStorage.EXPECT().ProcessingDebitingFunds(gomock.Any(),
+			handlersmodels.ReqWithdraw{
+				UserID:      1,
+				OrderNumber: "6011964086036747",
+				SumWithdraw: decimal.NewFromInt(1000),
+			}).Return(handlersmodels.ErrDuplicateOrderNumber),
+		mockStorage.EXPECT().ProcessingDebitingFunds(gomock.Any(),
+			handlersmodels.ReqWithdraw{
+				UserID:      1,
+				OrderNumber: "5460262971178544",
+				SumWithdraw: decimal.NewFromInt(100),
+			}).Return(handlersmodels.ErrNegativeBalanceValue),
+		mockStorage.EXPECT().ProcessingDebitingFunds(gomock.Any(),
+			handlersmodels.ReqWithdraw{
+				UserID:      1,
+				OrderNumber: "5460262971178544",
+				SumWithdraw: decimal.NewFromInt(100),
+			}).Return(handlersmodels.ErrDuplicateOrderNumberHistoryBalance),
+		mockStorage.EXPECT().ProcessingDebitingFunds(gomock.Any(),
+			handlersmodels.ReqWithdraw{
+				UserID:      1,
+				OrderNumber: "3533841638640315",
+				SumWithdraw: decimal.NewFromInt(100),
+			}).Return(nil),
 	)
 
 	method := http.MethodPost
@@ -120,7 +140,7 @@ func TestWithDraw(t *testing.T) {
 			name: "POST request was sent to \"http://localhost:8080/api/user/balance/withdraw\", with the correct " +
 				"request body, should return the status code 200",
 			req: req{
-				body:        `{"order":"5460262971178544","sum":100}`,
+				body:        `{"order":"3533841638640315","sum":100}`,
 				contentType: "application/json",
 				userID:      1,
 			},
@@ -135,7 +155,7 @@ func TestWithDraw(t *testing.T) {
 		ctx := context.WithValue(request.Context(), cookiemodels.UserID, test.userID)
 		request = request.WithContext(ctx)
 		w := httptest.NewRecorder()
-		hndlrs.WithDraw(w, request)
+		hndlr.WithDraw(w, request)
 
 		resp := w.Result()
 		defer resp.Body.Close()

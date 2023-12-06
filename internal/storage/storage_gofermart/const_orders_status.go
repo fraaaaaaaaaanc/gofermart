@@ -6,10 +6,10 @@ type OrderStatus string
 
 const (
 	orderStatusNew        OrderStatus = "NEW"
-	OrderStatusProcessing OrderStatus = "PROCESSING"
-	OrderStatusInvalid    OrderStatus = "INVALID"
-	OrderStatusProcessed  OrderStatus = "PROCESSED"
-	OrderStatusRegistered OrderStatus = "REGISTERED"
+	orderStatusProcessing OrderStatus = "PROCESSING"
+	orderStatusInvalid    OrderStatus = "INVALID"
+	orderStatusProcessed  OrderStatus = "PROCESSED"
+	orderStatusRegistered OrderStatus = "REGISTERED"
 )
 
 // constant running time of the context for database queries

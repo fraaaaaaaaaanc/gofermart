@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
-	"gofermart/internal/models/orderstatuses"
 	"gofermart/internal/storage/mock"
 	"io"
 	"net/http"
@@ -21,22 +21,23 @@ func TestGetOrders(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorageMock(ctrl)
-	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
+	mockStorage := mock.NewMockStorageGofermart(ctrl)
+	cookies := cookie.NewCookie("test")
+	hndlr := allhandlers.NewHandlers(mockStorage, cookies)
 
 	gomock.InOrder(
-		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(nil, handlersmodels.ErrTheAreNoOrders),
-		mockStorage.EXPECT().GetAllUserOrders(gomock.Any()).Return(
+		mockStorage.EXPECT().GetAllUserOrders(gomock.Any(), 1).Return(nil, handlersmodels.ErrTheAreNoOrders),
+		mockStorage.EXPECT().GetAllUserOrders(gomock.Any(), 2).Return(
 			[]handlersmodels.RespGetOrders{
 				{
 					OrderNumber: "545454545454",
-					Status:      orderstatuses.PROCESSED,
+					Status:      "PROCESSED",
 					Accrual:     900,
 					UploadedAt:  "2020-12-10T15:15:45+03:00",
 				},
 				{
 					OrderNumber: "6709504120728607",
-					Status:      orderstatuses.NEW,
+					Status:      "NEW",
 					UploadedAt:  "2020-12-10T15:12:01+03:00",
 				},
 			}, nil),
@@ -90,7 +91,7 @@ func TestGetOrders(t *testing.T) {
 			ctx := context.WithValue(request.Context(), cookiemodels.UserID, test.req.userID)
 			request = request.WithContext(ctx)
 			w := httptest.NewRecorder()
-			hndlrs.GetOrders(w, request)
+			hndlr.GetOrders(w, request)
 
 			resp := w.Result()
 			defer resp.Body.Close()

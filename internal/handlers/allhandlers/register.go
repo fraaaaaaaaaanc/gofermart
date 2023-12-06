@@ -1,8 +1,6 @@
 package allhandlers
 
 import (
-	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"gofermart/internal/logger"
@@ -35,15 +33,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 
 	reqRegister.Password = string(hashedPassword)
 	var userID int
-	err = h.strg.InTransaction(r.Context(), func(ctx context.Context, tx *sql.Tx) error {
-		userID, err = h.strg.AddNewUser(ctx, tx, &reqRegister)
-		if err != nil {
-			return err
-		}
-		err = h.strg.AddNewUserBalance(ctx, tx, userID)
-		return err
-	})
-
+	userID, err = h.strg.AddNewUserAndBalance(r.Context(), reqRegister)
 	if err != nil && !errors.Is(err, handlersmodels.ErrConflictLoginRegister) {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		logger.With(unLoggedUserID, err, r)

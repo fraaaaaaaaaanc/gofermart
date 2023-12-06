@@ -1,8 +1,6 @@
 package allhandlers
 
 import (
-	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"gofermart/internal/logger"
@@ -36,17 +34,7 @@ func (h *Handlers) WithDraw(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reqWithdraw.UserID = userID
-	err := h.strg.InTransaction(r.Context(), func(ctx context.Context, tx *sql.Tx) error {
-		if err := h.strg.CheckOrderNumber(ctx, tx, reqWithdraw.OrderNumber); err != nil {
-			return err
-		}
-		if err := h.strg.WithdrawBalance(ctx, tx, reqWithdraw); err != nil {
-			return err
-		}
-
-		return h.strg.AddHistoryBalance(ctx, tx, reqWithdraw)
-	})
-
+	err := h.strg.ProcessingDebitingFunds(r.Context(), reqWithdraw)
 	if err != nil {
 		switch true {
 		case errors.Is(err, handlersmodels.ErrDuplicateOrderNumber):

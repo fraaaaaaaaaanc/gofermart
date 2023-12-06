@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
+	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
 	"gofermart/internal/storage/mock"
@@ -15,11 +17,13 @@ import (
 )
 
 func TestBalance(t *testing.T) {
+	_ = logger.NewZapLogger("", "local")
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorageMock(ctrl)
-	hndlrs := allhandlers.NewHandlers(mockStorage, "test")
+	mockStorage := mock.NewMockStorageGofermart(ctrl)
+	cookies := cookie.NewCookie("test")
+	hndlr := allhandlers.NewHandlers(mockStorage, cookies)
 
 	gomock.InOrder(
 		mockStorage.EXPECT().GetUserBalance(gomock.Any()).Return(
@@ -78,7 +82,7 @@ func TestBalance(t *testing.T) {
 			ctx := context.WithValue(request.Context(), cookiemodels.UserID, test.userID)
 			request = request.WithContext(ctx)
 			w := httptest.NewRecorder()
-			hndlrs.Balance(w, request)
+			hndlr.Balance(w, request)
 
 			resp := w.Result()
 			defer resp.Body.Close()

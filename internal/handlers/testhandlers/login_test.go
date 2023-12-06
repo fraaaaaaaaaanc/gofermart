@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"gofermart/internal/cookie"
 	"gofermart/internal/handlers/allhandlers"
 	"gofermart/internal/models/handlers_models"
 	"gofermart/internal/storage/mock"
@@ -17,8 +18,9 @@ func TestLogin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockStorage := mock.NewMockStorageMock(ctrl)
-	hndlr := allhandlers.NewHandlers(mockStorage, "test")
+	mockStorage := mock.NewMockStorageGofermart(ctrl)
+	cookies := cookie.NewCookie("test")
+	hndlr := allhandlers.NewHandlers(mockStorage, cookies)
 
 	gomock.InOrder(mockStorage.EXPECT().CheckUserLoginData(&handlersmodels.RequestLogin{
 		Login:    "123",
