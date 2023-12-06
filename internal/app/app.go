@@ -33,6 +33,7 @@ func NewApp() (*app, error) {
 
 	strg, err := storagegofermart.NewStorage(flags.DataBaseURI)
 	if err != nil {
+		logger.Error("error creating the storage object", zap.Error(err))
 		return nil, err
 	}
 
@@ -44,6 +45,7 @@ func NewApp() (*app, error) {
 
 	rtr, err := router.NewRouter(hndlr, cookies)
 	if err != nil {
+		logger.Error("error creating the Router object", zap.Error(err))
 		return nil, err
 	}
 

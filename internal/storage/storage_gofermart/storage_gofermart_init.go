@@ -3,11 +3,14 @@ package storagegofermart
 import (
 	"context"
 	"database/sql"
+	"errors"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose"
+	"go.uber.org/zap"
+	"gofermart/internal/logger"
 )
 
-//consts migrationsDir = "C:\\Users\\frant\\go\\go1.21.0\\bin\\pkg\\mod\\github.com\\fraaaaaaaaaanc\\gofermart\\internal\\migrations"
+//const migrationsDir = "C:\\Users\\frant\\go\\go1.21.0\\bin\\pkg\\mod\\github.com\\fraaaaaaaaaanc\\gofermart\\internal\\migrations"
 
 const migrationsDir = "gofermart\\internal\\migrations"
 
@@ -18,6 +21,7 @@ type Storage struct {
 func NewStorage(storageDBAddress string) (*Storage, error) {
 	db, err := sql.Open("pgx", storageDBAddress)
 	if err != nil {
+		logger.Error("error connect to the database", zap.Error(err))
 		return nil, err
 	}
 
@@ -25,16 +29,18 @@ func NewStorage(storageDBAddress string) (*Storage, error) {
 	defer cansel()
 
 	if err = db.PingContext(ctx); err != nil {
+		logger.Error("error ping to the database", zap.Error(err))
 		return nil, err
 	}
 
-	_, err = goose.GetDBVersion(db)
-	if err != nil {
-		return nil, err
-	}
+	//_, err = goose.GetDBVersion(db)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	err = goose.Up(db, migrationsDir)
-	if err != nil && err != goose.ErrNoNextVersion {
+	if err != nil && !errors.Is(err, goose.ErrNoNextVersion) {
+		logger.Error("error migration execution", zap.Error(err))
 		return nil, err
 	}
 
