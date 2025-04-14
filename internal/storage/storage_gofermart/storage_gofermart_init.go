@@ -31,17 +31,6 @@ func NewStorage(storageDBAddress string) (*Storage, error) {
 		return nil, err
 	}
 
-	//_, err = goose.GetDBVersion(db)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//err = goose.Up(db, migrationsDir)
-	//if err != nil && !errors.Is(err, goose.ErrNoNextVersion) {
-	//	logger.Error("error migration execution", zap.Error(err))
-	//	return nil, err
-	//}
-
 	_, err = db.ExecContext(ctx, `
 	DO $$
 	BEGIN

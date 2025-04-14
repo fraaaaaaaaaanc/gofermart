@@ -6,7 +6,7 @@ import (
 	"gofermart/internal/logger"
 	cookiemodels "gofermart/internal/models/cookie_models"
 	"gofermart/internal/models/handlers_models"
-	"gofermart/internal/utils"
+	// "gofermart/internal/utils"
 	"net/http"
 )
 
@@ -27,11 +27,11 @@ func (h *Handlers) WithDraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := utils.IsLuhnValid(reqWithdraw.OrderNumber); err != nil {
-		http.Error(w, "the number ordered did not pass verification", http.StatusUnprocessableEntity)
-		logger.With(userID, err, r)
-		return
-	}
+	// if err := utils.IsLuhnValid(reqWithdraw.OrderNumber); err != nil {
+	// 	http.Error(w, "the number ordered did not pass verification", http.StatusUnprocessableEntity)
+	// 	logger.With(userID, err, r)
+	// 	return
+	// }
 
 	reqWithdraw.UserID = userID
 	err := h.strg.ProcessingDebitingFunds(r.Context(), reqWithdraw)

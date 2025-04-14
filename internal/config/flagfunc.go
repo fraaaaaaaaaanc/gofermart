@@ -9,7 +9,7 @@ import (
 const (
 	hostAddr     = "localhost"
 	hostPort     = 8080
-	addrDB       = "host=localhost password=1234 dbname=gofermart user=postgres sslmode=disable"
+	addrDB       = "host=localhost password=123123123 dbname=gofermart user=postgres sslmode=disable"
 	accrualSA    = "http://localhost:8080"
 	logFileParth = "C:\\Users\\frant\\go\\go1.21.0\\bin\\pkg\\mod\\github.com\\fraaaaaaaaaanc\\gofermart\\internal\\tmp\\log_file_project.json"
 	logLvlLocal  = "local"

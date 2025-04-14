@@ -31,6 +31,8 @@ func NewApp() (*app, error) {
 		return nil, err
 	}
 
+	logger.Info("start")
+
 	strg, err := storagegofermart.NewStorage(flags.DataBaseURI)
 	if err != nil {
 		logger.Error("error creating the storage object", zap.Error(err))
